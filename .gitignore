@@ -1,2 +1,23 @@
+# IDE
 .idea/
+.vscode/
+*.iml
+
+# Flutter generated
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+build/
+
+# Platform
+android/.gradle/
+ios/Pods/
+ios/.symlinks/
+
+# Misc
+*.log
+.DS_Store
+Thumbs.db
+
 docs/
