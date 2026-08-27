@@ -9,9 +9,9 @@ class AfyaMsafiriApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'AfyaMsafiri',
-      debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      routerConfig: appRouter,
+      routerConfig: AppRouter.router,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
