@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'app_shell.dart';
 import '../../features/onboarding/presentation/screens/welcome_screen.dart';
 import '../../features/auth/presentation/screens/create_account_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -50,7 +50,7 @@ class AppRouter {
 
       // Main shell with bottom nav
       ShellRoute(
-        builder: (context, state, child) => child,
+        builder: (context, state, child) => AppShell(child: child),
         routes: [
           GoRoute(
             path: '/home',
