@@ -1,7 +1,7 @@
 import '../models/profile_model.dart';
 
 class ProfileMockDataSource {
-  Map<String, dynamic> _profile = {
+  final Map<String, dynamic> _profile = {
     'id': 'mock-user-001',
     'fullName': 'John Doe',
     'email': 'john.doe@example.com',

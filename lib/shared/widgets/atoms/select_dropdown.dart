@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
 
 class SelectDropdown extends StatelessWidget {
   const SelectDropdown({
@@ -34,7 +34,7 @@ class SelectDropdown extends StatelessWidget {
               style: AppTextStyles.inputLabel.copyWith(color: AppColors.deepSlate),
               children: required
                   ? [
-                      const TextSpan(
+                      TextSpan(
                         text: ' *',
                         style: TextStyle(color: AppColors.urgentRed),
                       ),
@@ -45,7 +45,7 @@ class SelectDropdown extends StatelessWidget {
           const SizedBox(height: 8),
         ],
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           items: items
               .map((e) => DropdownMenuItem(
                     value: e,
@@ -58,7 +58,7 @@ class SelectDropdown extends StatelessWidget {
             hintText: hint ?? 'Select an option',
             errorText: errorText,
           ),
-          icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.textMuted),
+          icon: Icon(Icons.keyboard_arrow_down, color: AppColors.textMuted),
         ),
       ],
     );

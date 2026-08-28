@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
 
 class TextInput extends StatelessWidget {
   const TextInput({
@@ -46,7 +46,7 @@ class TextInput extends StatelessWidget {
               style: AppTextStyles.inputLabel.copyWith(color: AppColors.deepSlate),
               children: required
                   ? [
-                      const TextSpan(
+                      TextSpan(
                         text: ' *',
                         style: TextStyle(color: AppColors.urgentRed),
                       ),

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_text_styles.dart';
 import '../atoms/text_input.dart';
 
-class FormField extends StatelessWidget {
-  const FormField({
+class AppFormField extends StatelessWidget {
+  const AppFormField({
     super.key,
     this.label,
     this.hint,

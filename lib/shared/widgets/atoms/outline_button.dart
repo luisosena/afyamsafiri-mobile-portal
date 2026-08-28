@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_spacing.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_spacing.dart';
+import '../../../core/constants/app_text_styles.dart';
 
 class OutlineButton extends StatelessWidget {
   const OutlineButton({
@@ -28,7 +28,7 @@ class OutlineButton extends StatelessWidget {
         label: Text(label, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600)),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primaryBlue,
-          side: const BorderSide(color: AppColors.primaryBlue),
+          side: BorderSide(color: AppColors.primaryBlue),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusXs),
           ),

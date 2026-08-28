@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
 
-class Checkbox extends StatelessWidget {
-  const Checkbox({
+class AppCheckbox extends StatelessWidget {
+  const AppCheckbox({
     super.key,
     required this.value,
     required this.onChanged,
@@ -29,12 +29,24 @@ class Checkbox extends StatelessWidget {
             SizedBox(
               width: 24,
               height: 24,
-              child: FlutterCheckbox(
-                value: value,
-                onChanged: enabled ? onChanged : null,
-                activeColor: AppColors.primaryBlue,
-                checkColor: AppColors.white,
-                side: const BorderSide(color: AppColors.textMuted, width: 1.5),
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                  checkboxTheme: CheckboxThemeData(
+                    side: const BorderSide(color: AppColors.textMuted, width: 1.5),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    fillColor: WidgetStateProperty.resolveWith((states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return AppColors.primaryBlue;
+                      }
+                      return null;
+                    }),
+                    checkColor: WidgetStateProperty.all(AppColors.white),
+                  ),
+                ),
+                child: Checkbox(
+                  value: value,
+                  onChanged: enabled ? onChanged : null,
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -53,37 +65,4 @@ class Checkbox extends StatelessWidget {
   }
 }
 
-class FlutterCheckbox extends StatelessWidget {
-  const FlutterCheckbox({
-    super.key,
-    required this.value,
-    this.onChanged,
-    this.activeColor,
-    this.checkColor,
-    this.side,
-  });
 
-  final bool value;
-  final ValueChanged<bool?>? onChanged;
-  final Color? activeColor;
-  final Color? checkColor;
-  final BorderSide? side;
-
-  @override
-  Widget build(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        checkboxTheme: CheckboxThemeData(
-          side: side,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        ),
-      ),
-      child: Checkbox(
-        value: value,
-        onChanged: onChanged,
-        activeColor: activeColor,
-        checkColor: checkColor,
-      ),
-    );
-  }
-}

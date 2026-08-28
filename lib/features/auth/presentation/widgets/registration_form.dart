@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../shared/widgets/atoms/text_input.dart';
 import '../../../../shared/widgets/atoms/password_input.dart';
 import '../../../../shared/widgets/atoms/phone_input.dart';
@@ -146,7 +145,6 @@ class _RegistrationFormState extends State<RegistrationForm> {
             controller: _phoneController,
             label: 'Phone Number',
             hint: '712 345 678',
-            textInputAction: TextInputAction.next,
             validator: (v) => v != null && v.isNotEmpty && v.length < 6 ? 'Enter a valid phone number' : null,
           ),
           const SizedBox(height: 16),
@@ -173,7 +171,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
             },
           ),
           const SizedBox(height: 20),
-          Checkbox(
+          AppCheckbox(
             value: _acceptedTerms,
             onChanged: (v) => setState(() => _acceptedTerms = v ?? false),
             label: 'I agree to the Terms of Service and Privacy Policy',

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../shared/widgets/atoms/text_input.dart';
 import '../../../../shared/widgets/atoms/password_input.dart';
 import '../../../../shared/widgets/atoms/primary_button.dart';

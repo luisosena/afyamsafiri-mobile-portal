@@ -5,7 +5,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../shared/widgets/atoms/primary_button.dart';
 import '../../../../shared/widgets/atoms/secondary_button.dart';
-import '../widgets/security_badge.dart';
+import '../../../auth/presentation/widgets/security_badge.dart';
 
 class WelcomeHero extends StatelessWidget {
   const WelcomeHero({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_spacing.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_spacing.dart';
+import '../../../core/constants/app_text_styles.dart';
 
 class ProgressStepper extends StatelessWidget {
   const ProgressStepper({
@@ -22,7 +22,6 @@ class ProgressStepper extends StatelessWidget {
         Row(
           children: List.generate(totalSteps, (index) {
             final isActive = index < currentStep;
-            final isCurrent = index == currentStep - 1;
 
             return Expanded(
               child: Container(
@@ -38,7 +37,7 @@ class ProgressStepper extends StatelessWidget {
             );
           }),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: AppSpacing.sm),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
