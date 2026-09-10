@@ -10,11 +10,7 @@ import '../../features/booking/presentation/screens/booking_review_screen.dart';
 import '../../features/booking/presentation/screens/booking_confirmed_screen.dart';
 import '../../features/booking/presentation/screens/booking_history_screen.dart';
 import '../../features/booking/presentation/screens/booking_details_screen.dart';
-import '../../features/screening/presentation/screens/travel_history_screen.dart';
-import '../../features/screening/presentation/screens/symptoms_screen.dart';
-import '../../features/screening/presentation/screens/vaccination_screen.dart';
-import '../../features/screening/presentation/screens/additional_health_screen.dart';
-import '../../features/screening/presentation/screens/screening_review_screen.dart';
+import '../../features/screening/presentation/screens/health_screening_screen.dart';
 import '../../features/confirmation/presentation/screens/confirmation_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
@@ -101,29 +97,9 @@ class AppRouter {
 
       // Screening flow
       GoRoute(
-        path: '/screening/travel-history',
-        name: 'screeningTravelHistory',
-        builder: (context, state) => const TravelHistoryScreen(),
-      ),
-      GoRoute(
-        path: '/screening/symptoms',
-        name: 'screeningSymptoms',
-        builder: (context, state) => const SymptomsScreen(),
-      ),
-      GoRoute(
-        path: '/screening/vaccination',
-        name: 'screeningVaccination',
-        builder: (context, state) => const VaccinationScreen(),
-      ),
-      GoRoute(
-        path: '/screening/additional',
-        name: 'screeningAdditional',
-        builder: (context, state) => const AdditionalHealthScreen(),
-      ),
-      GoRoute(
-        path: '/screening/review',
-        name: 'screeningReview',
-        builder: (context, state) => const ScreeningReviewScreen(),
+        path: '/screening',
+        name: 'screening',
+        builder: (context, state) => const HealthScreeningScreen(),
       ),
 
       // Confirmation

@@ -51,7 +51,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
               message:
                   'Your booking requires a health screening before arrival. Complete it now to avoid delays at the point of entry.',
               actionLabel: 'Start Screening',
-              onAction: () => context.go('/screening/travel-history'),
+              onAction: () => context.go('/screening'),
             ),
           ],
           if (bookingProvider.nextUpcomingBooking != null) ...[
