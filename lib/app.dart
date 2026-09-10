@@ -14,6 +14,9 @@ import 'features/screening/presentation/providers/screening_provider.dart';
 import 'features/notifications/data/datasources/notification_mock_datasource.dart';
 import 'features/notifications/data/repositories/notification_repository_impl.dart';
 import 'features/notifications/presentation/providers/notification_provider.dart';
+import 'features/profile/data/datasources/profile_mock_datasource.dart';
+import 'features/profile/data/repositories/profile_repository_impl.dart';
+import 'features/profile/presentation/providers/profile_provider.dart';
 
 class AfyaMsafiriApp extends StatelessWidget {
   const AfyaMsafiriApp({super.key});
@@ -47,6 +50,13 @@ class AfyaMsafiriApp extends StatelessWidget {
           create: (_) => NotificationProvider(
             notificationRepository: NotificationRepositoryImpl(
               remoteDataSource: NotificationMockDataSource(),
+            ),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ProfileProvider(
+            profileRepository: ProfileRepositoryImpl(
+              remoteDataSource: ProfileMockDataSource(),
             ),
           ),
         ),
