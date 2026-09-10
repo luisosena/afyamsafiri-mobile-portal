@@ -11,6 +11,9 @@ import 'features/booking/presentation/providers/booking_provider.dart';
 import 'features/screening/data/datasources/screening_mock_datasource.dart';
 import 'features/screening/data/repositories/screening_repository_impl.dart';
 import 'features/screening/presentation/providers/screening_provider.dart';
+import 'features/notifications/data/datasources/notification_mock_datasource.dart';
+import 'features/notifications/data/repositories/notification_repository_impl.dart';
+import 'features/notifications/presentation/providers/notification_provider.dart';
 
 class AfyaMsafiriApp extends StatelessWidget {
   const AfyaMsafiriApp({super.key});
@@ -37,6 +40,13 @@ class AfyaMsafiriApp extends StatelessWidget {
           create: (_) => ScreeningProvider(
             screeningRepository: ScreeningRepositoryImpl(
               remoteDataSource: ScreeningMockDataSource(),
+            ),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => NotificationProvider(
+            notificationRepository: NotificationRepositoryImpl(
+              remoteDataSource: NotificationMockDataSource(),
             ),
           ),
         ),
