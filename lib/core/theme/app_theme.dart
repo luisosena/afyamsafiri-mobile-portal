@@ -46,7 +46,6 @@ class AppTheme {
             borderRadius: BorderRadius.circular(AppSpacing.radiusXs),
           ),
           side: const BorderSide(color: AppColors.primaryBlue),
-          minimumSize: const Size(double.infinity, 52),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

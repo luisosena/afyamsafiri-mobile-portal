@@ -28,6 +28,7 @@ class OutlineButton extends StatelessWidget {
         label: Text(label, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600)),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primaryBlue,
+          padding: EdgeInsets.zero,
           side: BorderSide(color: AppColors.primaryBlue),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusXs),

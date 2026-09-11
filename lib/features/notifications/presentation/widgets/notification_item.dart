@@ -18,7 +18,7 @@ class NotificationItem extends StatelessWidget {
     switch (type) {
       case NotificationType.actionRequired:
         return Icons.warning_rounded;
-      case NotificationType.bookingConfirmed:
+      case NotificationType.bookingSubmitted:
         return Icons.check_circle_rounded;
       case NotificationType.arrivalReminder:
         return Icons.schedule_rounded;
@@ -31,7 +31,7 @@ class NotificationItem extends StatelessWidget {
     switch (type) {
       case NotificationType.actionRequired:
         return AppColors.urgentRed;
-      case NotificationType.bookingConfirmed:
+      case NotificationType.bookingSubmitted:
         return AppColors.successGreen;
       case NotificationType.arrivalReminder:
         return AppColors.primaryBlue;

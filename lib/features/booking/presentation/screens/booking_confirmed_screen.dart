@@ -3,9 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
-import '../../../../shared/widgets/molecules/app_header.dart';
+import '../../../../core/constants/app_text_styles.dart';
 import '../providers/booking_provider.dart';
-import '../widgets/booking_confirmation_panel.dart';
 
 class BookingConfirmedScreen extends StatelessWidget {
   const BookingConfirmedScreen({super.key});
@@ -13,52 +12,85 @@ class BookingConfirmedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<BookingProvider>();
-    final booking = provider.confirmedBooking;
 
-    if (booking == null) {
-      return Scaffold(
-        appBar: const AppHeader(title: 'Booking Confirmed', showBack: false),
-        body: Center(
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.containerPadding,
+            vertical: AppSpacing.lg,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: AppColors.textMuted),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                'No booking data found.',
-                style: TextStyle(color: AppColors.textMuted),
+              Container(
+                width: 80,
+                height: 80,
+                decoration: const BoxDecoration(
+                  color: AppColors.successGreen,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check,
+                  color: AppColors.white,
+                  size: 40,
+                ),
               ),
-              const SizedBox(height: AppSpacing.md),
-              TextButton(
-                onPressed: () => context.go('/home'),
-                child: const Text('Back to Home'),
+              const SizedBox(height: AppSpacing.lg),
+              Text(
+                'Booking Submitted',
+                style: AppTextStyles.heading1.copyWith(fontSize: 22),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Your traveler surveillance form has been submitted successfully.',
+                style: AppTextStyles.body.copyWith(color: AppColors.textMuted),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              if (provider.referenceCode != null)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: AppColors.lightAccent,
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Reference Code',
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        provider.referenceCode!,
+                        style: AppTextStyles.heading1.copyWith(
+                          fontSize: 20,
+                          color: AppColors.primaryBlue,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: AppSpacing.xxl),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () {
+                    provider.reset();
+                    context.go('/home');
+                  },
+                  child: const Text('Back to Home'),
+                ),
               ),
             ],
-          ),
-        ),
-      );
-    }
-
-    return Scaffold(
-      backgroundColor: AppColors.surfaceGray,
-      appBar: const AppHeader(title: 'Booking Confirmed', showBack: false),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.containerPadding),
-          child: BookingConfirmationPanel(
-            booking: booking,
-            onSave: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Confirmation saved. (Mock)'),
-                  backgroundColor: AppColors.successGreen,
-                ),
-              );
-            },
-            onBackHome: () {
-              provider.resetForm();
-              context.go('/home');
-            },
           ),
         ),
       ),

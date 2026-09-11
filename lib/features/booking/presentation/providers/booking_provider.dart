@@ -1,176 +1,334 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/booking.dart';
-import '../../domain/entities/point_of_entry.dart';
 import '../../domain/repositories/booking_repository.dart';
+
+enum BookingSubmitStatus { initial, loading, submitting, success, error }
 
 enum BookingListStatus { initial, loading, loaded, error }
 
-enum BookingSubmitStatus { initial, submitting, success, error }
-
 class BookingProvider extends ChangeNotifier {
-  BookingProvider({required this.bookingRepository});
+  BookingProvider({
+    required this.bookingRepository,
+  });
 
   final BookingRepository bookingRepository;
 
-  BookingListStatus _status = BookingListStatus.initial;
-  List<Booking> _bookings = [];
+  BookingSubmitStatus _status = BookingSubmitStatus.initial;
   String? _errorMessage;
+  Booking _booking = Booking(
+    symptoms: Booking.createDefaultSymptoms(),
+  );
 
-  BookingListStatus get status => _status;
-  List<Booking> get bookings => _bookings;
+  BookingSubmitStatus get status => BookingSubmitStatus.initial;
+  BookingSubmitStatus get currentStatus => _status;
   String? get errorMessage => _errorMessage;
+  Booking get booking => _booking;
 
-  Booking? get nextUpcomingBooking {
-    final now = DateTime.now();
-    final upcoming = _bookings
-        .where((b) =>
-            b.isConfirmed &&
-            b.arrivalDate != null &&
-            DateTime.tryParse(b.arrivalDate!)?.isAfter(now) == true)
+  // Reference code after submission
+  String? _referenceCode;
+  String? get referenceCode => _referenceCode;
+
+  // Booking history
+  BookingListStatus _listStatus = BookingListStatus.initial;
+  List<Booking> _bookings = [];
+
+  BookingListStatus get listStatus => _listStatus;
+  List<Booking> get bookings => _bookings;
+
+  Booking? get latestSubmittedBooking {
+    final submitted = _bookings
+        .where((d) => d.status == BookingStatus.submitted)
         .toList()
-      ..sort((a, b) => a.arrivalDate!.compareTo(b.arrivalDate!));
-    return upcoming.isNotEmpty ? upcoming.first : null;
+      ..sort((a, b) => (b.createdAt ?? DateTime(0)).compareTo(a.createdAt ?? DateTime(0)));
+    return submitted.isNotEmpty ? submitted.first : null;
   }
 
-  bool get hasPendingScreening => _bookings.any((b) => b.isPending);
+  // Dropdown data
+  List<String> _portsOfEntry = [];
+  List<String> _nationalities = [];
+  List<String> _countries = [];
+  List<String> _purposesOfVisit = [];
 
-  Future<void> loadBookings() async {
-    _status = BookingListStatus.loading;
-    _errorMessage = null;
-    notifyListeners();
+  List<String> get portsOfEntry => _portsOfEntry;
+  List<String> get nationalities => _nationalities;
+  List<String> get countries => _countries;
+  List<String> get purposesOfVisit => _purposesOfVisit;
 
-    try {
-      _bookings = await bookingRepository.getBookingHistory();
-      _status = BookingListStatus.loaded;
-    } catch (e) {
-      _status = BookingListStatus.error;
-      _errorMessage = e.toString().replaceAll('Exception: ', '');
+  // Step 1 validation
+  bool get isStep1Valid =>
+      _booking.passportNumber.trim().isNotEmpty &&
+      _booking.portOfEntry.isNotEmpty &&
+      _booking.arrivalDate != null;
+
+  // Step 2 validation
+  bool get isStep2Valid =>
+      _booking.firstName.trim().isNotEmpty &&
+      _booking.surname.trim().isNotEmpty &&
+      _booking.gender.isNotEmpty &&
+      _booking.dateOfBirth != null &&
+      _booking.nationality.isNotEmpty;
+
+  // Step 3 validation
+  bool get isStep3Valid =>
+      _booking.purposeOfVisit.isNotEmpty &&
+      _booking.localPhone.trim().isNotEmpty &&
+      _booking.email.trim().isNotEmpty &&
+      _booking.journeyStartCountry.isNotEmpty;
+
+  // Step 4 validation
+  bool get isStep4Valid =>
+      _booking.symptoms.every((s) => s.value != null);
+
+  // Step 5 validation
+  bool get isStep5Valid =>
+      _booking.visitedOutbreakArea != null &&
+      _booking.caredForSick != null &&
+      _booking.participatedInBurial != null &&
+      _booking.declarationAccepted;
+
+  bool isStepValid(int step) {
+    switch (step) {
+      case 0:
+        return isStep1Valid;
+      case 1:
+        return isStep2Valid;
+      case 2:
+        return isStep3Valid;
+      case 3:
+        return isStep4Valid;
+      case 4:
+        return isStep5Valid;
+      default:
+        return false;
     }
+  }
+
+  // Step 1 setters
+  void setPassportNumber(String value) {
+    _booking = _booking.copyWith(passportNumber: value);
     notifyListeners();
   }
 
-  // --- Booking form state ---
+  void setPortOfEntry(String? value) {
+    if (value != null) {
+      _booking = _booking.copyWith(portOfEntry: value);
+      notifyListeners();
+    }
+  }
 
-  String? _selectedPointOfEntry;
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
-  String _flightNumber = '';
-  bool _healthDeclaration = false;
-
-  BookingSubmitStatus _submitStatus = BookingSubmitStatus.initial;
-  Booking? _confirmedBooking;
-  List<PointOfEntry> _pointsOfEntry = [];
-
-  String? get selectedPointOfEntry => _selectedPointOfEntry;
-  DateTime? get selectedDate => _selectedDate;
-  TimeOfDay? get selectedTime => _selectedTime;
-  String get flightNumber => _flightNumber;
-  bool get healthDeclaration => _healthDeclaration;
-  BookingSubmitStatus get submitStatus => _submitStatus;
-  Booking? get confirmedBooking => _confirmedBooking;
-  List<PointOfEntry> get pointsOfEntry => _pointsOfEntry;
-
-  bool get isFormValid =>
-      _selectedPointOfEntry != null &&
-      _selectedDate != null &&
-      _selectedTime != null;
-
-  bool get isReviewValid => _healthDeclaration;
-
-  void setPointOfEntry(String? value) {
-    _selectedPointOfEntry = value;
+  void setArrivalDate(DateTime? value) {
+    _booking = _booking.copyWith(arrivalDate: value);
     notifyListeners();
   }
 
-  void setDate(DateTime? value) {
-    _selectedDate = value;
+  // Step 2 setters
+  void setFirstName(String value) {
+    _booking = _booking.copyWith(firstName: value);
     notifyListeners();
   }
 
-  void setTime(TimeOfDay? value) {
-    _selectedTime = value;
+  void setMiddleName(String value) {
+    _booking = _booking.copyWith(middleName: value);
     notifyListeners();
   }
 
-  void setFlightNumber(String value) {
-    _flightNumber = value;
+  void setSurname(String value) {
+    _booking = _booking.copyWith(surname: value);
     notifyListeners();
   }
 
-  void setHealthDeclaration(bool value) {
-    _healthDeclaration = value;
+  void setGender(String? value) {
+    if (value != null) {
+      _booking = _booking.copyWith(gender: value);
+      notifyListeners();
+    }
+  }
+
+  void setDateOfBirth(DateTime? value) {
+    _booking = _booking.copyWith(dateOfBirth: value);
     notifyListeners();
   }
 
-  String get formattedDate {
-    if (_selectedDate == null) return '';
-    return '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}';
+  void setNationality(String? value) {
+    if (value != null) {
+      _booking = _booking.copyWith(nationality: value);
+      notifyListeners();
+    }
   }
 
-  String get formattedTime {
-    if (_selectedTime == null) return '';
-    return '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
+  // Step 3 setters
+  void setVesselName(String value) {
+    _booking = _booking.copyWith(vesselName: value);
+    notifyListeners();
   }
 
-  Future<void> loadPointsOfEntry() async {
+  void setSeatNumber(String value) {
+    _booking = _booking.copyWith(seatNumber: value);
+    notifyListeners();
+  }
+
+  void setPurposeOfVisit(String? value) {
+    if (value != null) {
+      _booking = _booking.copyWith(purposeOfVisit: value);
+      notifyListeners();
+    }
+  }
+
+  void setDurationOfStay(String value) {
+    _booking = _booking.copyWith(durationOfStay: value);
+    notifyListeners();
+  }
+
+  void setLocalAddress(String value) {
+    _booking = _booking.copyWith(localAddress: value);
+    notifyListeners();
+  }
+
+  void setHotelName(String value) {
+    _booking = _booking.copyWith(hotelName: value);
+    notifyListeners();
+  }
+
+  void setLocalPhone(String value) {
+    _booking = _booking.copyWith(localPhone: value);
+    notifyListeners();
+  }
+
+  void setEmail(String value) {
+    _booking = _booking.copyWith(email: value);
+    notifyListeners();
+  }
+
+  void setJourneyStartCountry(String? value) {
+    if (value != null) {
+      _booking = _booking.copyWith(journeyStartCountry: value);
+      notifyListeners();
+    }
+  }
+
+  void setCountriesVisitedCount(String value) {
+    _booking = _booking.copyWith(countriesVisitedCount: value);
+    notifyListeners();
+  }
+
+  // Step 4 setters
+  void setSymptomValue(int index, bool? value) {
+    final updated = List<SymptomEntry>.from(_booking.symptoms);
+    updated[index] = updated[index].copyWith(value: value);
+    _booking = _booking.copyWith(symptoms: updated);
+    notifyListeners();
+  }
+
+  void setAdditionalSymptoms(String value) {
+    _booking = _booking.copyWith(additionalSymptoms: value);
+    notifyListeners();
+  }
+
+  // Step 5 setters
+  void setVisitedOutbreakArea(bool? value) {
+    _booking = _booking.copyWith(visitedOutbreakArea: value);
+    notifyListeners();
+  }
+
+  void setCaredForSick(bool? value) {
+    _booking = _booking.copyWith(caredForSick: value);
+    notifyListeners();
+  }
+
+  void setParticipatedInBurial(bool? value) {
+    _booking = _booking.copyWith(participatedInBurial: value);
+    notifyListeners();
+  }
+
+  void setDeclarationAccepted(bool value) {
+    _booking = _booking.copyWith(declarationAccepted: value);
+    notifyListeners();
+  }
+
+  // Load dropdown data
+  Future<void> loadPortsOfEntry() async {
     try {
-      _pointsOfEntry = await bookingRepository.getPointsOfEntry();
+      _portsOfEntry = await bookingRepository.getPortsOfEntry();
       notifyListeners();
     } catch (_) {
-      _pointsOfEntry = [];
+      _portsOfEntry = [];
     }
   }
 
-  Future<void> submitBooking() async {
-    _submitStatus = BookingSubmitStatus.submitting;
+  Future<void> loadNationalities() async {
+    try {
+      _nationalities = await bookingRepository.getNationalities();
+      notifyListeners();
+    } catch (_) {
+      _nationalities = [];
+    }
+  }
+
+  Future<void> loadCountries() async {
+    try {
+      _countries = await bookingRepository.getCountries();
+      notifyListeners();
+    } catch (_) {
+      _countries = [];
+    }
+  }
+
+  Future<void> loadPurposesOfVisit() async {
+    try {
+      _purposesOfVisit =
+          await bookingRepository.getPurposesOfVisit();
+      notifyListeners();
+    } catch (_) {
+      _purposesOfVisit = [];
+    }
+  }
+
+  // Submit
+  Future<bool> submit() async {
+    _status = BookingSubmitStatus.submitting;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      _confirmedBooking = await bookingRepository.createBooking(
-        pointOfEntry: _selectedPointOfEntry!,
-        arrivalDate: formattedDate,
-        arrivalTime: formattedTime,
-        flightNumber: _flightNumber.isNotEmpty ? _flightNumber : null,
-      );
-      _submitStatus = BookingSubmitStatus.success;
-      _bookings.insert(0, _confirmedBooking!);
+      final result =
+          await bookingRepository.submitBooking(_booking);
+      _booking = result;
+      _referenceCode = result.referenceCode;
+      _status = BookingSubmitStatus.success;
+      notifyListeners();
+      return true;
     } catch (e) {
-      _submitStatus = BookingSubmitStatus.error;
+      _status = BookingSubmitStatus.error;
+      _errorMessage = e.toString().replaceAll('Exception: ', '');
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // Load booking history
+  Future<void> loadBookings() async {
+    _listStatus = BookingListStatus.loading;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _bookings = await bookingRepository.getBookings();
+      _listStatus = BookingListStatus.loaded;
+    } catch (e) {
+      _listStatus = BookingListStatus.error;
       _errorMessage = e.toString().replaceAll('Exception: ', '');
     }
     notifyListeners();
   }
 
-  void resetForm() {
-    _selectedPointOfEntry = null;
-    _selectedDate = null;
-    _selectedTime = null;
-    _flightNumber = '';
-    _healthDeclaration = false;
-    _submitStatus = BookingSubmitStatus.initial;
-    _confirmedBooking = null;
-    _errorMessage = null;
-    notifyListeners();
-  }
-
+  // Cancel booking
   Future<void> cancelBooking(String bookingId) async {
     try {
       await bookingRepository.cancelBooking(bookingId);
-      final index = _bookings.indexWhere((b) => b.id == bookingId);
+      final index = _bookings.indexWhere((d) => d.id == bookingId);
       if (index != -1) {
-        _bookings[index] = Booking(
-          id: _bookings[index].id,
-          referenceCode: _bookings[index].referenceCode,
-          pointOfEntry: _bookings[index].pointOfEntry,
-          arrivalDate: _bookings[index].arrivalDate,
-          arrivalTime: _bookings[index].arrivalTime,
-          flightNumber: _bookings[index].flightNumber,
+        _bookings[index] = _bookings[index].copyWith(
           status: BookingStatus.cancelled,
-          qrCodeData: _bookings[index].qrCodeData,
-          createdAt: _bookings[index].createdAt,
-          updatedAt: DateTime.now(),
-          userId: _bookings[index].userId,
         );
         notifyListeners();
       }
@@ -178,5 +336,16 @@ class BookingProvider extends ChangeNotifier {
       _errorMessage = e.toString().replaceAll('Exception: ', '');
       notifyListeners();
     }
+  }
+
+  // Reset
+  void reset() {
+    _status = BookingSubmitStatus.initial;
+    _errorMessage = null;
+    _referenceCode = null;
+    _booking = Booking(
+      symptoms: Booking.createDefaultSymptoms(),
+    );
+    notifyListeners();
   }
 }

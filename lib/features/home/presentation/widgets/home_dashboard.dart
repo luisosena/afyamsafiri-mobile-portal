@@ -6,8 +6,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../booking/presentation/providers/booking_provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
-import 'action_required_card.dart';
-import 'upcoming_arrival_card.dart';
+import 'upcoming_booking_card.dart';
 
 class HomeDashboard extends StatefulWidget {
   const HomeDashboard({super.key});
@@ -42,24 +41,14 @@ class _HomeDashboardState extends State<HomeDashboard> {
           _GreetingHeader(userName: userName),
           const SizedBox(height: AppSpacing.lg),
           _PlanTripCard(
-            onTap: () => context.go('/booking/new'),
+            onTap: () => context.go('/booking'),
           ),
-          if (bookingProvider.hasPendingScreening) ...[
+          if (bookingProvider.latestSubmittedBooking != null) ...[
             const SizedBox(height: AppSpacing.md),
-            ActionRequiredCard(
-              title: 'Complete Health Screening',
-              message:
-                  'Your booking requires a health screening before arrival. Complete it now to avoid delays at the point of entry.',
-              actionLabel: 'Start Screening',
-              onAction: () => context.go('/screening'),
-            ),
-          ],
-          if (bookingProvider.nextUpcomingBooking != null) ...[
-            const SizedBox(height: AppSpacing.md),
-            UpcomingArrivalCard(
-              booking: bookingProvider.nextUpcomingBooking!,
+            UpcomingBookingCard(
+              booking: bookingProvider.latestSubmittedBooking!,
               onViewDetails: () => context.go(
-                '/booking/${bookingProvider.nextUpcomingBooking!.id}',
+                '/bookings/${bookingProvider.latestSubmittedBooking!.id}',
               ),
             ),
           ],
@@ -188,7 +177,7 @@ class _PlanTripCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Register your arrival and complete health screening before travelling to Tanzania.',
+              'Register your arrival and complete the traveler surveillance form before travelling to Tanzania.',
               style: AppTextStyles.body.copyWith(
                 color: AppColors.white.withValues(alpha: 0.85),
                 fontSize: 13,
@@ -217,7 +206,7 @@ class _QuickActionsRow extends StatelessWidget {
         Expanded(
           child: _QuickActionCard(
             icon: Icons.history,
-            label: 'Travel History',
+            label: 'History',
             onTap: () => context.go('/bookings'),
           ),
         ),

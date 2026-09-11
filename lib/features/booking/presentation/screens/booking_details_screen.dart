@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../shared/widgets/molecules/app_header.dart';
+import '../../domain/entities/booking.dart';
 import '../providers/booking_provider.dart';
 import '../widgets/booking_details_panel.dart';
-import '../widgets/cancel_booking_modal.dart';
 
 class BookingDetailsScreen extends StatelessWidget {
   const BookingDetailsScreen({super.key, required this.bookingId});
@@ -16,7 +16,9 @@ class BookingDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<BookingProvider>();
-    final booking = provider.bookings.where((b) => b.id == bookingId).firstOrNull;
+    final booking = provider.bookings
+        .where((d) => d.id == bookingId)
+        .firstOrNull;
 
     return Scaffold(
       backgroundColor: AppColors.surfaceGray,
@@ -32,25 +34,47 @@ class BookingDetailsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(AppSpacing.containerPadding),
                 child: BookingDetailsPanel(
                   booking: booking,
-                  onEdit: () => context.go('/booking/new'),
-                  onCancel: () async {
-                    final confirmed = await CancelBookingModal.show(
-                      context,
-                      referenceCode: booking.referenceCode,
-                    );
-                    if (confirmed == true && context.mounted) {
-                      await provider.cancelBooking(booking.id);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Booking ${booking.referenceCode} cancelled.'),
-                            backgroundColor: AppColors.deepSlate,
-                          ),
-                        );
-                        context.go('/bookings');
-                      }
-                    }
-                  },
+                  onNewBooking: () => context.go('/booking'),
+                  onCancel: booking.status == BookingStatus.submitted
+                      ? () async {
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('Cancel Booking'),
+                              content: Text(
+                                'Are you sure you want to cancel booking ${booking.referenceCode}?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text('Keep'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx, true),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: AppColors.urgentRed,
+                                  ),
+                                  child: const Text('Cancel Booking'),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirmed == true && context.mounted) {
+                            await provider.cancelBooking(booking.id!);
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Booking ${booking.referenceCode} cancelled.',
+                                  ),
+                                  backgroundColor: AppColors.deepSlate,
+                                ),
+                              );
+                              context.go('/bookings');
+                            }
+                          }
+                        }
+                      : null,
                 ),
               ),
       ),

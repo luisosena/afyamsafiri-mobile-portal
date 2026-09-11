@@ -4,16 +4,16 @@ class NotificationMockDataSource {
   final List<Map<String, dynamic>> _notifications = [
     {
       'id': 'notif-001',
-      'title': 'Booking Confirmed',
-      'message': 'Your arrival booking AMS-2026-001 has been confirmed.',
-      'type': 'bookingConfirmed',
+      'title': 'Booking Submitted',
+      'message': 'Your traveler surveillance form TZ-2026-001 has been submitted successfully.',
+      'type': 'bookingSubmitted',
       'isRead': false,
       'createdAt': '2026-08-20T10:05:00Z',
     },
     {
       'id': 'notif-002',
-      'title': 'Health Screening Required',
-      'message': 'Please complete your health screening before arrival.',
+      'title': 'Arrival Booking Required',
+      'message': 'Please submit your traveler surveillance form before arrival.',
       'type': 'actionRequired',
       'isRead': false,
       'createdAt': '2026-08-21T08:00:00Z',

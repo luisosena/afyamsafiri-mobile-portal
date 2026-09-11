@@ -12,7 +12,8 @@ class BookingHistoryScreen extends StatefulWidget {
   const BookingHistoryScreen({super.key});
 
   @override
-  State<BookingHistoryScreen> createState() => _BookingHistoryScreenState();
+  State<BookingHistoryScreen> createState() =>
+      _BookingHistoryScreenState();
 }
 
 class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
@@ -37,8 +38,11 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     );
   }
 
-  Widget _buildBody(BuildContext context, BookingProvider provider) {
-    switch (provider.status) {
+  Widget _buildBody(
+    BuildContext context,
+    BookingProvider provider,
+  ) {
+    switch (provider.listStatus) {
       case BookingListStatus.initial:
       case BookingListStatus.loading:
         return const Center(
@@ -52,25 +56,27 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline, size: 48, color: AppColors.urgentRed),
+                const Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: AppColors.urgentRed,
+                ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
                   'Failed to load bookings',
-                  style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
+                  style:
+                      AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   provider.errorMessage ?? 'Unknown error',
-                  style: AppTextStyles.caption.copyWith(color: AppColors.textMuted),
+                  style:
+                      AppTextStyles.caption.copyWith(color: AppColors.textMuted),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 ElevatedButton(
                   onPressed: provider.loadBookings,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryBlue,
-                    foregroundColor: AppColors.white,
-                  ),
                   child: const Text('Retry'),
                 ),
               ],
@@ -87,7 +93,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.flight_takeoff,
+                    Icons.description_outlined,
                     size: 64,
                     color: AppColors.textMuted.withValues(alpha: 0.4),
                   ),
@@ -98,18 +104,15 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    'Create your first arrival booking to get started.',
-                    style: AppTextStyles.body.copyWith(color: AppColors.textMuted),
+                    'Submit your first traveler surveillance form to get started.',
+                    style:
+                        AppTextStyles.body.copyWith(color: AppColors.textMuted),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   ElevatedButton(
-                    onPressed: () => context.go('/booking/new'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      foregroundColor: AppColors.white,
-                    ),
-                    child: const Text('Create Booking'),
+                    onPressed: () => context.go('/booking'),
+                    child: const Text('New Booking'),
                   ),
                 ],
               ),
@@ -126,7 +129,8 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
               padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: BookingCard(
                 booking: booking,
-                onViewDetails: () => context.go('/booking/${booking.id}'),
+                onViewDetails: () =>
+                    context.go('/bookings/${booking.id}'),
               ),
             );
           },

@@ -5,8 +5,8 @@ import '../../../../core/constants/app_text_styles.dart';
 import '../../../booking/domain/entities/booking.dart';
 import '../../../../shared/widgets/atoms/status_badge.dart';
 
-class UpcomingArrivalCard extends StatelessWidget {
-  const UpcomingArrivalCard({
+class UpcomingBookingCard extends StatelessWidget {
+  const UpcomingBookingCard({
     super.key,
     required this.booking,
     required this.onViewDetails,
@@ -31,13 +31,13 @@ class UpcomingArrivalCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Upcoming Arrival',
+                'Latest Booking',
                 style: AppTextStyles.inputLabel.copyWith(
                   color: AppColors.deepSlate,
                 ),
               ),
               StatusBadge(
-                label: 'Confirmed',
+                label: 'Submitted',
                 type: StatusType.confirmed,
               ),
             ],
@@ -46,32 +46,28 @@ class UpcomingArrivalCard extends StatelessWidget {
           _InfoRow(
             icon: Icons.flight_land,
             label: 'Entry Reference',
-            value: booking.referenceCode,
+            value: booking.referenceCode ?? '---',
           ),
           const SizedBox(height: AppSpacing.sm),
           _InfoRow(
             icon: Icons.location_on_outlined,
-            label: 'Point of Entry',
-            value: booking.pointOfEntry ?? '—',
+            label: 'Port of Entry',
+            value: booking.portOfEntry,
           ),
           const SizedBox(height: AppSpacing.sm),
           _InfoRow(
             icon: Icons.calendar_today_outlined,
             label: 'Arrival Date',
-            value: booking.arrivalDate ?? '—',
+            value: booking.arrivalDate != null
+                ? '${booking.arrivalDate!.day}/${booking.arrivalDate!.month}/${booking.arrivalDate!.year}'
+                : '---',
           ),
-          const SizedBox(height: AppSpacing.sm),
-          _InfoRow(
-            icon: Icons.access_time,
-            label: 'Arrival Time',
-            value: booking.arrivalTime ?? '—',
-          ),
-          if (booking.flightNumber != null) ...[
+          if (booking.vesselName.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             _InfoRow(
               icon: Icons.confirmation_number_outlined,
-              label: 'Flight / Transport',
-              value: booking.flightNumber!,
+              label: 'Vessel/Flight',
+              value: booking.vesselName,
             ),
           ],
           const SizedBox(height: AppSpacing.md),
@@ -82,6 +78,7 @@ class UpcomingArrivalCard extends StatelessWidget {
               onPressed: onViewDetails,
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.primaryBlue,
+                padding: EdgeInsets.zero,
                 side: const BorderSide(color: AppColors.primaryBlue),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSpacing.radiusXs),
@@ -125,7 +122,8 @@ class _InfoRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: AppTextStyles.caption.copyWith(color: AppColors.textMuted),
+                style:
+                    AppTextStyles.caption.copyWith(color: AppColors.textMuted),
               ),
               Text(
                 value,

@@ -5,19 +5,20 @@ import '../../features/onboarding/presentation/screens/welcome_screen.dart';
 import '../../features/auth/presentation/screens/create_account_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
-import '../../features/booking/presentation/screens/arrival_booking_screen.dart';
-import '../../features/booking/presentation/screens/booking_review_screen.dart';
-import '../../features/booking/presentation/screens/booking_confirmed_screen.dart';
-import '../../features/booking/presentation/screens/booking_history_screen.dart';
-import '../../features/booking/presentation/screens/booking_details_screen.dart';
-import '../../features/screening/presentation/screens/health_screening_screen.dart';
-import '../../features/confirmation/presentation/screens/confirmation_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/sync/presentation/screens/loading_screen.dart';
 import '../../features/sync/presentation/screens/api_error_screen.dart';
 import '../../features/sync/presentation/screens/session_expired_screen.dart';
 import '../../features/sync/presentation/screens/submission_failure_screen.dart';
+import '../../features/booking/presentation/screens/entry_details_screen.dart';
+import '../../features/booking/presentation/screens/traveler_info_screen.dart';
+import '../../features/booking/presentation/screens/visit_travel_details_screen.dart';
+import '../../features/booking/presentation/screens/health_screening_screen.dart';
+import '../../features/booking/presentation/screens/epidemiological_declaration_screen.dart';
+import '../../features/booking/presentation/screens/booking_confirmed_screen.dart';
+import '../../features/booking/presentation/screens/booking_history_screen.dart';
+import '../../features/booking/presentation/screens/booking_details_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -73,14 +74,29 @@ class AppRouter {
 
       // Booking flow
       GoRoute(
-        path: '/booking/new',
-        name: 'newBooking',
-        builder: (context, state) => const ArrivalBookingScreen(),
+        path: '/booking',
+        name: 'booking',
+        builder: (context, state) => const EntryDetailsScreen(),
+      ),
+      GoRoute(
+        path: '/booking/traveler',
+        name: 'bookingTraveler',
+        builder: (context, state) => const TravelerInfoScreen(),
+      ),
+      GoRoute(
+        path: '/booking/visit',
+        name: 'bookingVisit',
+        builder: (context, state) => const VisitTravelDetailsScreen(),
+      ),
+      GoRoute(
+        path: '/booking/health',
+        name: 'bookingHealth',
+        builder: (context, state) => const HealthScreeningScreen(),
       ),
       GoRoute(
         path: '/booking/review',
         name: 'bookingReview',
-        builder: (context, state) => const BookingReviewScreen(),
+        builder: (context, state) => const EpidemiologicalDeclarationScreen(),
       ),
       GoRoute(
         path: '/booking/confirmed',
@@ -88,25 +104,11 @@ class AppRouter {
         builder: (context, state) => const BookingConfirmedScreen(),
       ),
       GoRoute(
-        path: '/booking/:id',
+        path: '/bookings/:id',
         name: 'bookingDetails',
         builder: (context, state) => BookingDetailsScreen(
           bookingId: state.pathParameters['id']!,
         ),
-      ),
-
-      // Screening flow
-      GoRoute(
-        path: '/screening',
-        name: 'screening',
-        builder: (context, state) => const HealthScreeningScreen(),
-      ),
-
-      // Confirmation
-      GoRoute(
-        path: '/confirmation',
-        name: 'confirmation',
-        builder: (context, state) => const ConfirmationScreen(),
       ),
 
       // Sync / Error states

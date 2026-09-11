@@ -1,140 +1,271 @@
-import '../models/booking_request.dart';
-import '../models/booking_response.dart';
-import '../models/point_of_entry.dart';
-
 class BookingMockDataSource {
   final List<Map<String, dynamic>> _bookings = [
     {
-      'id': 'bk-001',
-      'referenceCode': 'AMS-2026-001',
-      'pointOfEntry': 'Julius Nyerere International Airport',
-      'arrivalDate': '2026-09-01',
-      'arrivalTime': '14:30',
-      'flightNumber': 'KQ480',
-      'status': 'confirmed',
-      'qrCodeData': 'AMS-2026-001-VALID-QR',
-      'createdAt': '2026-08-20T10:00:00Z',
-      'updatedAt': '2026-08-20T10:00:00Z',
-      'userId': 'mock-user-001',
-    },
-    {
-      'id': 'bk-002',
-      'referenceCode': 'AMS-2026-002',
-      'pointOfEntry': 'Kilimanjaro International Airport',
-      'arrivalDate': '2026-09-15',
-      'arrivalTime': '09:00',
-      'flightNumber': 'ET815',
-      'status': 'pending',
-      'createdAt': '2026-08-22T08:00:00Z',
-      'updatedAt': '2026-08-22T08:00:00Z',
-      'userId': 'mock-user-001',
+      'id': 'ad-001',
+      'referenceCode': 'TZ-2026-001',
+      'status': 'submitted',
+      'passportNumber': 'AB1234567',
+      'portOfEntry': 'Julius Nyerere International Airport',
+      'arrivalDate': '2026-09-15T00:00:00Z',
+      'firstName': 'John',
+      'middleName': '',
+      'surname': 'Doe',
+      'gender': 'Male',
+      'dateOfBirth': '1990-05-15T00:00:00Z',
+      'nationality': 'American',
+      'vesselName': 'KQ480',
+      'seatNumber': '14A',
+      'purposeOfVisit': 'Tourism',
+      'durationOfStay': '7',
+      'localPhone': '+255712345678',
+      'email': 'john.doe@email.com',
+      'journeyStartCountry': 'Kenya',
+      'createdAt': '2026-09-01T10:00:00Z',
+      'updatedAt': '2026-09-01T10:00:00Z',
     },
   ];
 
-  Future<BookingResponse> createBooking(BookingRequest request) async {
+  Future<Map<String, dynamic>> submitBooking(
+    Map<String, dynamic> data,
+  ) async {
     await Future.delayed(const Duration(seconds: 1));
 
-    final booking = {
+    final entry = {
       'id': 'bk-${DateTime.now().millisecondsSinceEpoch}',
-      'referenceCode': 'AMS-2026-${DateTime.now().millisecondsSinceEpoch}',
-      'pointOfEntry': request.pointOfEntry,
-      'arrivalDate': request.arrivalDate,
-      'arrivalTime': request.arrivalTime,
-      'flightNumber': request.flightNumber,
-      'status': 'pending',
+      'referenceCode': 'TZ-${DateTime.now().millisecondsSinceEpoch}',
+      'status': 'submitted',
       'createdAt': DateTime.now().toIso8601String(),
       'updatedAt': DateTime.now().toIso8601String(),
-      'userId': 'mock-user-001',
+      ...data,
     };
 
-    _bookings.add(booking);
-    return BookingResponse.fromJson(booking);
+    _bookings.add(entry);
+    return entry;
   }
 
-  Future<BookingResponse> getBooking(String bookingId) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    final booking = _bookings.firstWhere(
-      (b) => b['id'] == bookingId,
-      orElse: () => throw Exception('Booking not found'),
-    );
-
-    return BookingResponse.fromJson(booking);
-  }
-
-  Future<List<BookingResponse>> getBookingHistory() async {
+  Future<List<Map<String, dynamic>>> getBookings() async {
     await Future.delayed(const Duration(milliseconds: 800));
-
-    return _bookings
-        .map((b) => BookingResponse.fromJson(b))
-        .toList();
-  }
-
-  Future<BookingResponse> updateBooking({
-    required String bookingId,
-    String? pointOfEntry,
-    String? arrivalDate,
-    String? arrivalTime,
-    String? flightNumber,
-  }) async {
-    await Future.delayed(const Duration(seconds: 1));
-
-    final index = _bookings.indexWhere((b) => b['id'] == bookingId);
-    if (index == -1) throw Exception('Booking not found');
-
-    if (pointOfEntry != null) _bookings[index]['pointOfEntry'] = pointOfEntry;
-    if (arrivalDate != null) _bookings[index]['arrivalDate'] = arrivalDate;
-    if (arrivalTime != null) _bookings[index]['arrivalTime'] = arrivalTime;
-    if (flightNumber != null) _bookings[index]['flightNumber'] = flightNumber;
-    _bookings[index]['updatedAt'] = DateTime.now().toIso8601String();
-
-    return BookingResponse.fromJson(_bookings[index]);
+    return List.from(_bookings);
   }
 
   Future<void> cancelBooking(String bookingId) async {
     await Future.delayed(const Duration(seconds: 1));
-
-    final index = _bookings.indexWhere((b) => b['id'] == bookingId);
+    final index = _bookings.indexWhere((d) => d['id'] == bookingId);
     if (index == -1) throw Exception('Booking not found');
-
     _bookings[index]['status'] = 'cancelled';
     _bookings[index]['updatedAt'] = DateTime.now().toIso8601String();
   }
 
-  Future<List<PointOfEntryModel>> getPointsOfEntry() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+  Future<List<String>> getPortsOfEntry() async {
+    await Future.delayed(const Duration(milliseconds: 300));
 
     return [
-      const PointOfEntryModel(
-        id: 'poe-001',
-        name: 'Julius Nyerere International Airport',
-        type: 'airport',
-        location: 'Dar es Salaam',
-      ),
-      const PointOfEntryModel(
-        id: 'poe-002',
-        name: 'Kilimanjaro International Airport',
-        type: 'airport',
-        location: 'Kilimanjaro',
-      ),
-      const PointOfEntryModel(
-        id: 'poe-003',
-        name: 'Namanga Border Post',
-        type: 'land',
-        location: 'Arusha',
-      ),
-      const PointOfEntryModel(
-        id: 'poe-004',
-        name: 'Tunduma Border Post',
-        type: 'land',
-        location: 'Mbeya',
-      ),
-      const PointOfEntryModel(
-        id: 'poe-005',
-        name: 'Dar es Salaam Port',
-        type: 'marine',
-        location: 'Dar es Salaam',
-      ),
+      'Julius Nyerere International Airport',
+      'Kilimanjaro International Airport',
+      'Abeid Amani Karume International Airport',
+      'Mwanza Airport',
+      'Namanga Border Post',
+      'Tunduma Border Post',
+      'Horohoro Border Post',
+      'Rusumo Border Post',
+      'Dar es Salaam Port',
+      'Tanga Port',
+      'Mtwara Port',
+      'Zanzibar Port',
+    ];
+  }
+
+  Future<List<String>> getNationalities() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    return [
+      'Tanzanian',
+      'Kenyan',
+      'Ugandan',
+      'Rwandan',
+      'Burundian',
+      'South Sudanese',
+      'Congolese (DRC)',
+      'Ethiopian',
+      'Somali',
+      'Mozambican',
+      'Malawian',
+      'Zambian',
+      'Zimbabwean',
+      'South African',
+      'Nigerian',
+      'Ghanaian',
+      'Indian',
+      'Chinese',
+      'American',
+      'British',
+      'German',
+      'French',
+      'Dutch',
+      'Canadian',
+      'Australian',
+      'Other',
+    ];
+  }
+
+  Future<List<String>> getCountries() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    return [
+      'Afghanistan',
+      'Albania',
+      'Algeria',
+      'Angola',
+      'Argentina',
+      'Australia',
+      'Austria',
+      'Bangladesh',
+      'Belgium',
+      'Benin',
+      'Bolivia',
+      'Botswana',
+      'Brazil',
+      'Burkina Faso',
+      'Burundi',
+      'Cambodia',
+      'Cameroon',
+      'Canada',
+      'Central African Republic',
+      'Chad',
+      'Chile',
+      'China',
+      'Colombia',
+      'Congo',
+      'Costa Rica',
+      'Croatia',
+      'Cuba',
+      'Cyprus',
+      'Czech Republic',
+      'DR Congo',
+      'Denmark',
+      'Djibouti',
+      'Ecuador',
+      'Egypt',
+      'El Salvador',
+      'Equatorial Guinea',
+      'Eritrea',
+      'Estonia',
+      'Ethiopia',
+      'Finland',
+      'France',
+      'Gabon',
+      'Gambia',
+      'Germany',
+      'Ghana',
+      'Greece',
+      'Guatemala',
+      'Guinea',
+      'Guinea-Bissau',
+      'Haiti',
+      'Honduras',
+      'Hungary',
+      'India',
+      'Indonesia',
+      'Iran',
+      'Iraq',
+      'Ireland',
+      'Israel',
+      'Italy',
+      'Ivory Coast',
+      'Jamaica',
+      'Japan',
+      'Jordan',
+      'Kazakhstan',
+      'Kenya',
+      'Kuwait',
+      'Lebanon',
+      'Lesotho',
+      'Liberia',
+      'Libya',
+      'Madagascar',
+      'Malawi',
+      'Malaysia',
+      'Mali',
+      'Mauritania',
+      'Mauritius',
+      'Mexico',
+      'Morocco',
+      'Mozambique',
+      'Myanmar',
+      'Namibia',
+      'Nepal',
+      'Netherlands',
+      'New Zealand',
+      'Nicaragua',
+      'Niger',
+      'Nigeria',
+      'North Korea',
+      'Norway',
+      'Oman',
+      'Pakistan',
+      'Palestine',
+      'Panama',
+      'Papua New Guinea',
+      'Paraguay',
+      'Peru',
+      'Philippines',
+      'Poland',
+      'Portugal',
+      'Qatar',
+      'Romania',
+      'Russia',
+      'Rwanda',
+      'Saudi Arabia',
+      'Senegal',
+      'Serbia',
+      'Sierra Leone',
+      'Singapore',
+      'Somalia',
+      'South Africa',
+      'South Korea',
+      'South Sudan',
+      'Spain',
+      'Sri Lanka',
+      'Sudan',
+      'Sweden',
+      'Switzerland',
+      'Syria',
+      'Taiwan',
+      'Thailand',
+      'Togo',
+      'Tunisia',
+      'Turkey',
+      'UAE',
+      'Uganda',
+      'Ukraine',
+      'United Kingdom',
+      'United States',
+      'Uruguay',
+      'Uzbekistan',
+      'Venezuela',
+      'Vietnam',
+      'Yemen',
+      'Zambia',
+      'Zimbabwe',
+    ];
+  }
+
+  Future<List<String>> getPurposesOfVisit() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    return [
+      'Tourism',
+      'Business',
+      'Transit',
+      'Diplomatic',
+      'Study/Education',
+      'Medical',
+      'Employment',
+      'Conference/Meeting',
+      'Visiting Family/Friends',
+      'NGO/Humanitarian',
+      'Research',
+      'Other',
     ];
   }
 }

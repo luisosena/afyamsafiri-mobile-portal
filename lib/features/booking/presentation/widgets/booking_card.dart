@@ -17,34 +17,27 @@ class BookingCard extends StatelessWidget {
 
   StatusType get _statusType {
     switch (booking.status) {
-      case BookingStatus.confirmed:
+      case BookingStatus.submitted:
         return StatusType.confirmed;
-      case BookingStatus.completed:
-        return StatusType.completed;
+      case BookingStatus.pendingSync:
+        return StatusType.pendingSync;
+      case BookingStatus.draft:
+        return StatusType.draft;
       case BookingStatus.cancelled:
         return StatusType.cancelled;
-      case BookingStatus.pending:
-        return StatusType.urgent;
-      case BookingStatus.draft:
-      case BookingStatus.pendingSync:
-        return StatusType.draft;
     }
   }
 
   String get _statusLabel {
     switch (booking.status) {
-      case BookingStatus.confirmed:
-        return 'Confirmed';
-      case BookingStatus.completed:
-        return 'Completed';
-      case BookingStatus.cancelled:
-        return 'Cancelled';
-      case BookingStatus.pending:
-        return 'Pending';
-      case BookingStatus.draft:
-        return 'Draft';
+      case BookingStatus.submitted:
+        return 'Submitted';
       case BookingStatus.pendingSync:
         return 'Pending Sync';
+      case BookingStatus.draft:
+        return 'Draft';
+      case BookingStatus.cancelled:
+        return 'Cancelled';
     }
   }
 
@@ -64,7 +57,7 @@ class BookingCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                booking.referenceCode,
+                booking.referenceCode ?? '---',
                 style: AppTextStyles.body.copyWith(
                   fontWeight: FontWeight.w600,
                   color: AppColors.deepSlate,
@@ -74,15 +67,17 @@ class BookingCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          if (booking.pointOfEntry != null) ...[
+          if (booking.portOfEntry.isNotEmpty) ...[
             Row(
               children: [
-                Icon(Icons.location_on_outlined, size: 14, color: AppColors.textMuted),
+                Icon(Icons.location_on_outlined,
+                    size: 14, color: AppColors.textMuted),
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    booking.pointOfEntry!,
-                    style: AppTextStyles.caption.copyWith(color: AppColors.textMuted),
+                    booking.portOfEntry,
+                    style: AppTextStyles.caption
+                        .copyWith(color: AppColors.textMuted),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -93,11 +88,13 @@ class BookingCard extends StatelessWidget {
           if (booking.arrivalDate != null) ...[
             Row(
               children: [
-                Icon(Icons.calendar_today_outlined, size: 14, color: AppColors.textMuted),
+                Icon(Icons.calendar_today_outlined,
+                    size: 14, color: AppColors.textMuted),
                 const SizedBox(width: 4),
                 Text(
-                  '${booking.arrivalDate}${booking.arrivalTime != null ? '  ${booking.arrivalTime}' : ''}',
-                  style: AppTextStyles.caption.copyWith(color: AppColors.textMuted),
+                  '${booking.arrivalDate!.day}/${booking.arrivalDate!.month}/${booking.arrivalDate!.year}',
+                  style: AppTextStyles.caption
+                      .copyWith(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -110,6 +107,7 @@ class BookingCard extends StatelessWidget {
               onPressed: onViewDetails,
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.primaryBlue,
+                padding: EdgeInsets.zero,
                 side: const BorderSide(color: AppColors.primaryBlue),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSpacing.radiusXs),

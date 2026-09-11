@@ -10,44 +10,37 @@ class BookingDetailsPanel extends StatelessWidget {
   const BookingDetailsPanel({
     super.key,
     required this.booking,
-    required this.onEdit,
-    required this.onCancel,
+    required this.onNewBooking,
+    this.onCancel,
   });
 
   final Booking booking;
-  final VoidCallback onEdit;
-  final VoidCallback onCancel;
+  final VoidCallback onNewBooking;
+  final VoidCallback? onCancel;
 
   StatusType get _statusType {
     switch (booking.status) {
-      case BookingStatus.confirmed:
+      case BookingStatus.submitted:
         return StatusType.confirmed;
-      case BookingStatus.completed:
-        return StatusType.completed;
+      case BookingStatus.pendingSync:
+        return StatusType.pendingSync;
+      case BookingStatus.draft:
+        return StatusType.draft;
       case BookingStatus.cancelled:
         return StatusType.cancelled;
-      case BookingStatus.pending:
-        return StatusType.urgent;
-      case BookingStatus.draft:
-      case BookingStatus.pendingSync:
-        return StatusType.draft;
     }
   }
 
   String get _statusLabel {
     switch (booking.status) {
-      case BookingStatus.confirmed:
-        return 'Confirmed';
-      case BookingStatus.completed:
-        return 'Completed';
-      case BookingStatus.cancelled:
-        return 'Cancelled';
-      case BookingStatus.pending:
-        return 'Pending';
-      case BookingStatus.draft:
-        return 'Draft';
+      case BookingStatus.submitted:
+        return 'Submitted';
       case BookingStatus.pendingSync:
         return 'Pending Sync';
+      case BookingStatus.draft:
+        return 'Draft';
+      case BookingStatus.cancelled:
+        return 'Cancelled';
     }
   }
 
@@ -116,10 +109,11 @@ class BookingDetailsPanel extends StatelessWidget {
               children: [
                 Text(
                   'Reference',
-                  style: AppTextStyles.caption.copyWith(color: AppColors.textMuted),
+                  style:
+                      AppTextStyles.caption.copyWith(color: AppColors.textMuted),
                 ),
                 Text(
-                  booking.referenceCode,
+                  booking.referenceCode ?? '---',
                   style: AppTextStyles.body.copyWith(
                     fontWeight: FontWeight.w600,
                     color: AppColors.deepSlate,
@@ -132,7 +126,51 @@ class BookingDetailsPanel extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.lg),
 
-        // Arrival info grid
+        // Traveler info
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Traveler Information',
+                style: AppTextStyles.body.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.deepSlate,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              SummaryRow(
+                label: 'Name',
+                value:
+                    '${booking.firstName} ${booking.middleName.isNotEmpty ? '${booking.middleName} ' : ''}${booking.surname}',
+              ),
+              const Divider(height: 1),
+              SummaryRow(
+                label: 'Passport/ID',
+                value: booking.passportNumber,
+              ),
+              const Divider(height: 1),
+              SummaryRow(
+                label: 'Nationality',
+                value: booking.nationality,
+              ),
+              const Divider(height: 1),
+              SummaryRow(
+                label: 'Gender',
+                value: booking.gender,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // Arrival info
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(AppSpacing.lg),
@@ -152,109 +190,57 @@ class BookingDetailsPanel extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.sm),
               SummaryRow(
-                label: 'Point of Entry',
-                value: booking.pointOfEntry ?? '—',
+                label: 'Port of Entry',
+                value: booking.portOfEntry,
               ),
               const Divider(height: 1),
               SummaryRow(
                 label: 'Arrival Date',
-                value: booking.arrivalDate ?? '—',
+                value: booking.arrivalDate != null
+                    ? '${booking.arrivalDate!.day}/${booking.arrivalDate!.month}/${booking.arrivalDate!.year}'
+                    : '---',
               ),
-              const Divider(height: 1),
-              SummaryRow(
-                label: 'Arrival Time',
-                value: booking.arrivalTime ?? '—',
-              ),
-              if (booking.flightNumber != null) ...[
+              if (booking.vesselName.isNotEmpty) ...[
                 const Divider(height: 1),
                 SummaryRow(
-                  label: 'Flight / Transport',
-                  value: booking.flightNumber!,
+                  label: 'Vessel/Flight',
+                  value: booking.vesselName,
                 ),
               ],
-            ],
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-
-        // Health screening status
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: booking.isConfirmed
-                      ? AppColors.successGreen.withValues(alpha: 0.12)
-                      : AppColors.urgentRed.withValues(alpha: 0.12),
-                  shape: BoxShape.circle,
+              if (booking.purposeOfVisit.isNotEmpty) ...[
+                const Divider(height: 1),
+                SummaryRow(
+                  label: 'Purpose of Visit',
+                  value: booking.purposeOfVisit,
                 ),
-                child: Icon(
-                  booking.isConfirmed
-                      ? Icons.check_circle_outline
-                      : Icons.warning_amber_rounded,
-                  color: booking.isConfirmed
-                      ? AppColors.successGreen
-                      : AppColors.urgentRed,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Health Screening',
-                      style: AppTextStyles.body.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.deepSlate,
-                      ),
-                    ),
-                    Text(
-                      booking.isConfirmed
-                          ? 'Screening completed'
-                          : 'Screening required',
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              ],
             ],
           ),
         ),
         const SizedBox(height: AppSpacing.xl),
 
         // Actions
-        if (!booking.isCancelled && !booking.isCompleted) ...[
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: OutlinedButton.icon(
-              onPressed: onEdit,
-              icon: const Icon(Icons.edit_outlined, size: 18),
-              label: Text(
-                'Edit Booking',
-                style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.primaryBlue,
-                side: const BorderSide(color: AppColors.primaryBlue),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                ),
+        SizedBox(
+          width: double.infinity,
+          height: 48,
+          child: OutlinedButton.icon(
+            onPressed: onNewBooking,
+            icon: const Icon(Icons.add, size: 18),
+            label: Text(
+              'New Booking',
+              style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.primaryBlue,
+              padding: EdgeInsets.zero,
+              side: const BorderSide(color: AppColors.primaryBlue),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
               ),
             ),
           ),
+        ),
+        if (onCancel != null) ...[
           const SizedBox(height: AppSpacing.sm),
           SizedBox(
             width: double.infinity,
@@ -268,6 +254,7 @@ class BookingDetailsPanel extends StatelessWidget {
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.urgentRed,
+                padding: EdgeInsets.zero,
                 side: const BorderSide(color: AppColors.urgentRed),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSpacing.radiusSm),

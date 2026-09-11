@@ -1,6 +1,6 @@
 enum NotificationType {
   actionRequired,
-  bookingConfirmed,
+  bookingSubmitted,
   arrivalReminder,
   general,
 }

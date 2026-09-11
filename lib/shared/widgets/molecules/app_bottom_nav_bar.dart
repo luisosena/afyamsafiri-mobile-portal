@@ -40,8 +40,8 @@ class AppBottomNavBar extends StatelessWidget {
                 onTap: () => onTap(0),
               ),
               _NavItem(
-                icon: Icons.calendar_today_outlined,
-                activeIcon: Icons.calendar_today,
+                icon: Icons.description_outlined,
+                activeIcon: Icons.description,
                 label: 'Bookings',
                 isActive: currentIndex == 1,
                 onTap: () => onTap(1),
