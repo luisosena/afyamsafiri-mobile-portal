@@ -1,13 +1,13 @@
 import '../../domain/entities/notification.dart';
 import '../../domain/repositories/notification_repository.dart';
-import '../datasources/notification_mock_datasource.dart';
+import '../datasources/notification_datasource.dart';
 
 class NotificationRepositoryImpl implements NotificationRepository {
   NotificationRepositoryImpl({
     required this.remoteDataSource,
   });
 
-  final NotificationMockDataSource remoteDataSource;
+  final NotificationDataSource remoteDataSource;
 
   @override
   Future<List<AppNotification>> getNotifications() async {

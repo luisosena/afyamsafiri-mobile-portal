@@ -1,13 +1,13 @@
 import '../../domain/entities/profile.dart';
 import '../../domain/repositories/profile_repository.dart';
-import '../datasources/profile_mock_datasource.dart';
+import '../datasources/profile_datasource.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   ProfileRepositoryImpl({
     required this.remoteDataSource,
   });
 
-  final ProfileMockDataSource remoteDataSource;
+  final ProfileDataSource remoteDataSource;
 
   @override
   Future<Profile> getProfile() async {

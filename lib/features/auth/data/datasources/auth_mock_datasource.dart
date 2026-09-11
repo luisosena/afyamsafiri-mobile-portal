@@ -1,11 +1,13 @@
 import '../models/registration_request.dart';
 import '../models/auth_response.dart';
+import 'auth_datasource.dart';
 
-class AuthMockDataSource {
+class AuthMockDataSource implements AuthDataSource {
   String? _currentUserId;
   String? _currentToken;
   bool _isLoggedIn = false;
 
+  @override
   Future<AuthResponse> register(RegistrationRequest request) async {
     await Future.delayed(const Duration(seconds: 1));
 
@@ -21,6 +23,7 @@ class AuthMockDataSource {
     );
   }
 
+  @override
   Future<AuthResponse> login(String email, String password) async {
     await Future.delayed(const Duration(seconds: 1));
 
@@ -40,6 +43,7 @@ class AuthMockDataSource {
     );
   }
 
+  @override
   Future<void> logout() async {
     await Future.delayed(const Duration(milliseconds: 500));
     _currentUserId = null;
@@ -47,10 +51,12 @@ class AuthMockDataSource {
     _isLoggedIn = false;
   }
 
+  @override
   Future<bool> isLoggedIn() async {
     return _isLoggedIn;
   }
 
+  @override
   Future<Map<String, dynamic>?> getCurrentUser() async {
     if (!_isLoggedIn) return null;
 

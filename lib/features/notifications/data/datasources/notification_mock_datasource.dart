@@ -1,6 +1,7 @@
 import '../models/notification.dart';
+import 'notification_datasource.dart';
 
-class NotificationMockDataSource {
+class NotificationMockDataSource implements NotificationDataSource {
   final List<Map<String, dynamic>> _notifications = [
     {
       'id': 'notif-001',
@@ -28,11 +29,13 @@ class NotificationMockDataSource {
     },
   ];
 
+  @override
   Future<List<NotificationModel>> getNotifications() async {
     await Future.delayed(const Duration(milliseconds: 500));
     return _notifications.map((n) => NotificationModel.fromJson(n)).toList();
   }
 
+  @override
   Future<void> markAsRead(String notificationId) async {
     await Future.delayed(const Duration(milliseconds: 200));
     final index = _notifications.indexWhere((n) => n['id'] == notificationId);
@@ -41,6 +44,7 @@ class NotificationMockDataSource {
     }
   }
 
+  @override
   Future<void> markAllAsRead() async {
     await Future.delayed(const Duration(milliseconds: 300));
     for (final n in _notifications) {
@@ -48,6 +52,7 @@ class NotificationMockDataSource {
     }
   }
 
+  @override
   Future<int> getUnreadCount() async {
     return _notifications.where((n) => n['isRead'] == false).length;
   }

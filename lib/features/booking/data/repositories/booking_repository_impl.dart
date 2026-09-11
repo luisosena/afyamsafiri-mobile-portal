@@ -1,13 +1,13 @@
 import '../../domain/entities/booking.dart';
 import '../../domain/repositories/booking_repository.dart';
-import '../datasources/booking_mock_datasource.dart';
+import '../datasources/booking_datasource.dart';
 
 class BookingRepositoryImpl implements BookingRepository {
   BookingRepositoryImpl({
     required this.remoteDataSource,
   });
 
-  final BookingMockDataSource remoteDataSource;
+  final BookingDataSource remoteDataSource;
 
   @override
   Future<Booking> submitBooking(Booking booking) async {

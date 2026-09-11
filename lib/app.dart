@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'core/network/connectivity_service.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/data/datasources/auth_mock_datasource.dart';
@@ -22,6 +23,9 @@ class AfyaMsafiriApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (_) => ConnectivityService()..checkConnectivity()..startMonitoring(),
+        ),
         ChangeNotifierProvider(
           create: (_) => AuthProvider(
             authRepository: AuthRepositoryImpl(

@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/entities/user.dart';
-import '../datasources/auth_mock_datasource.dart';
+import '../datasources/auth_datasource.dart';
 import '../models/registration_request.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -9,7 +9,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required this.remoteDataSource,
   });
 
-  final AuthMockDataSource remoteDataSource;
+  final AuthDataSource remoteDataSource;
 
   @override
   Future<User> register({

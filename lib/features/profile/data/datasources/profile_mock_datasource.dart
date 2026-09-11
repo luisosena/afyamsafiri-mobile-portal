@@ -1,6 +1,7 @@
 import '../models/profile_model.dart';
+import 'profile_datasource.dart';
 
-class ProfileMockDataSource {
+class ProfileMockDataSource implements ProfileDataSource {
   final Map<String, dynamic> _profile = {
     'id': 'mock-user-001',
     'fullName': 'John Doe',
@@ -10,11 +11,13 @@ class ProfileMockDataSource {
     'passportNumber': 'AB1234567',
   };
 
+  @override
   Future<ProfileModel> getProfile() async {
     await Future.delayed(const Duration(milliseconds: 500));
     return ProfileModel.fromJson(_profile);
   }
 
+  @override
   Future<ProfileModel> updateProfile({
     String? fullName,
     String? email,

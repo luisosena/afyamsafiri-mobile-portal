@@ -1,4 +1,6 @@
-class BookingMockDataSource {
+import 'booking_datasource.dart';
+
+class BookingMockDataSource implements BookingDataSource {
   final List<Map<String, dynamic>> _bookings = [
     {
       'id': 'ad-001',
@@ -25,6 +27,7 @@ class BookingMockDataSource {
     },
   ];
 
+  @override
   Future<Map<String, dynamic>> submitBooking(
     Map<String, dynamic> data,
   ) async {
@@ -43,11 +46,13 @@ class BookingMockDataSource {
     return entry;
   }
 
+  @override
   Future<List<Map<String, dynamic>>> getBookings() async {
     await Future.delayed(const Duration(milliseconds: 800));
     return List.from(_bookings);
   }
 
+  @override
   Future<void> cancelBooking(String bookingId) async {
     await Future.delayed(const Duration(seconds: 1));
     final index = _bookings.indexWhere((d) => d['id'] == bookingId);
@@ -56,6 +61,7 @@ class BookingMockDataSource {
     _bookings[index]['updatedAt'] = DateTime.now().toIso8601String();
   }
 
+  @override
   Future<List<String>> getPortsOfEntry() async {
     await Future.delayed(const Duration(milliseconds: 300));
 
@@ -75,6 +81,7 @@ class BookingMockDataSource {
     ];
   }
 
+  @override
   Future<List<String>> getNationalities() async {
     await Future.delayed(const Duration(milliseconds: 300));
 
@@ -108,6 +115,7 @@ class BookingMockDataSource {
     ];
   }
 
+  @override
   Future<List<String>> getCountries() async {
     await Future.delayed(const Duration(milliseconds: 300));
 
@@ -250,6 +258,7 @@ class BookingMockDataSource {
     ];
   }
 
+  @override
   Future<List<String>> getPurposesOfVisit() async {
     await Future.delayed(const Duration(milliseconds: 300));
 
