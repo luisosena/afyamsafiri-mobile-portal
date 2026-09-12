@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
+import 'package:afyamsafiri/core/network/connectivity_service.dart';
 import 'package:afyamsafiri/features/auth/domain/entities/user.dart';
 import 'package:afyamsafiri/features/auth/presentation/providers/auth_provider.dart';
 import 'package:afyamsafiri/features/booking/domain/entities/booking.dart';
@@ -10,10 +11,15 @@ import 'package:afyamsafiri/features/home/presentation/widgets/home_dashboard.da
 
 class MockAuthProvider extends Mock implements AuthProvider {}
 class MockBookingProvider extends Mock implements BookingProvider {}
+class MockConnectivityService extends Mock implements ConnectivityService {
+  @override
+  bool get isOnline => true;
+}
 
 void main() {
   late MockAuthProvider mockAuthProvider;
   late MockBookingProvider mockBookingProvider;
+  late MockConnectivityService mockConnectivityService;
 
   const testUser = User(
     id: 'u1',
@@ -44,6 +50,7 @@ void main() {
   setUp(() {
     mockAuthProvider = MockAuthProvider();
     mockBookingProvider = MockBookingProvider();
+    mockConnectivityService = MockConnectivityService();
 
     when(() => mockAuthProvider.user).thenReturn(testUser);
     when(() => mockBookingProvider.latestSubmittedBooking).thenReturn(null);
@@ -55,6 +62,7 @@ void main() {
     return MaterialApp(
       home: MultiProvider(
         providers: [
+          ChangeNotifierProvider<ConnectivityService>.value(value: mockConnectivityService),
           ChangeNotifierProvider<AuthProvider>.value(value: mockAuthProvider),
           ChangeNotifierProvider<BookingProvider>.value(value: mockBookingProvider),
         ],

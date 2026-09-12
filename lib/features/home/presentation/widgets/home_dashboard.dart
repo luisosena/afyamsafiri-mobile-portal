@@ -6,6 +6,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../booking/presentation/providers/booking_provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../../shared/widgets/molecules/offline_banner.dart';
 import 'upcoming_booking_card.dart';
 
 class HomeDashboard extends StatefulWidget {
@@ -38,6 +39,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const OfflineBanner(),
           _GreetingHeader(userName: userName),
           const SizedBox(height: AppSpacing.lg),
           _PlanTripCard(

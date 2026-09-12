@@ -10,6 +10,7 @@ class AppColors {
   // Semantic
   static const Color successGreen = Color(0xFF22C55E);
   static const Color urgentRed = Color(0xFFEF4444);
+  static const Color warningYellow = Color(0xFFF59E0B);
 
   // Surface
   static const Color lightAccent = Color(0xFFEFF6FF);

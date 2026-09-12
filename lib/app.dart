@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/network/connectivity_service.dart';
 import 'core/router/app_router.dart';
+import 'core/services/dhis2_service.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/data/datasources/auth_mock_datasource.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
@@ -16,8 +17,12 @@ import 'features/booking/data/datasources/booking_mock_datasource.dart';
 import 'features/booking/data/repositories/booking_repository_impl.dart';
 import 'features/booking/presentation/providers/booking_provider.dart';
 
+const bool useDHIS2 = bool.fromEnvironment('USE_DHIS2', defaultValue: false);
+
 class AfyaMsafiriApp extends StatelessWidget {
-  const AfyaMsafiriApp({super.key});
+  const AfyaMsafiriApp({super.key, this.dhis2Service});
+
+  final DHIS2Service? dhis2Service;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +31,8 @@ class AfyaMsafiriApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => ConnectivityService()..checkConnectivity()..startMonitoring(),
         ),
+        if (dhis2Service != null)
+          Provider<DHIS2Service>.value(value: dhis2Service!),
         ChangeNotifierProvider(
           create: (_) => AuthProvider(
             authRepository: AuthRepositoryImpl(
