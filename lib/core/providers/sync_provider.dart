@@ -26,8 +26,8 @@ class SyncProvider extends ChangeNotifier {
 
     try {
       await dhis2Service.syncEvents();
+      _pendingCount = await dhis2Service.getPendingCount();
       _state = SyncState.success;
-      _pendingCount = 0;
     } catch (e) {
       _state = SyncState.error;
       _errorMessage = e.toString();
@@ -35,8 +35,8 @@ class SyncProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updatePendingCount(int count) {
-    _pendingCount = count;
+  Future<void> updatePendingCount() async {
+    _pendingCount = await dhis2Service.getPendingCount();
     notifyListeners();
   }
 

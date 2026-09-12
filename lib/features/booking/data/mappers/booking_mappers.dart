@@ -41,7 +41,7 @@ TrackedEntityInstance mapBookingToTEI({
   final now = DateTime.now().toIso8601String();
 
   final enrollment = Enrollment(
-    id: teiId,
+    id: _uuid.v4(),
     trackedEntityInstance: teiId,
     trackedEntityType: trackedEntityType,
     orgUnit: orgUnit,
@@ -74,6 +74,7 @@ Event mapBookingToTravelHistoryEvent({
   final eventDate = booking.arrivalDate?.toIso8601String().split('T').first ??
       DateTime.now().toIso8601String().split('T').first;
 
+  // TODO(C6): populate from booking.countriesVisited once repeatable sections are implemented
   final dataValues = <EventDataValue>[
     _dv(eventId, DHIS2IDs.countryVisitedDE, ''),
     _dv(eventId, DHIS2IDs.provinceDE, ''),

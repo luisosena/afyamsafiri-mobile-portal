@@ -16,7 +16,7 @@ Map<String, dynamic> mapD2UserToCurrentUser(User user) {
   return {
     'id': user.id,
     'fullName': '${user.firstName} ${user.surname ?? ''}'.trim(),
-    'email': user.username,
+    'email': '',
     'phone': user.phoneNumber,
     'gender': user.gender,
   };

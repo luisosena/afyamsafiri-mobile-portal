@@ -2,11 +2,21 @@ import 'package:d2_touch/d2_touch.dart';
 import 'package:d2_touch/modules/auth/models/login-response.model.dart';
 import 'package:d2_touch/modules/auth/entities/user.entity.dart';
 import 'package:d2_touch/shared/models/request_progress.model.dart';
+import 'package:flutter/foundation.dart';
 
 class DHIS2Service {
-  DHIS2Service({this.serverUrl = 'https://afyamsafiri.moh.go.tz'});
+  DHIS2Service({
+    required this.serverUrl,
+    this.mediatorUrl = 'https://afyamsafiri.moh.go.tz/mediator/api',
+  });
 
+  /// The DHIS2 server URL (e.g. https://play.dhis2.org/2.39.0).
+  /// d2_touch connects directly to this — NOT the mediator.
   final String serverUrl;
+
+  /// The mediator API URL, used for metadata proxying if needed.
+  final String mediatorUrl;
+
   D2Touch? _d2;
 
   D2Touch get d2 {
@@ -14,8 +24,14 @@ class DHIS2Service {
     return _d2!;
   }
 
-  Future<void> init() async {
-    _d2 = await D2Touch.init();
+  Future<bool> init() async {
+    try {
+      _d2 = await D2Touch.init();
+      return true;
+    } catch (_) {
+      _d2 = null;
+      return false;
+    }
   }
 
   Future<LoginResponseStatus> login({
@@ -42,18 +58,32 @@ class DHIS2Service {
   }
 
   Future<void> downloadMetadata() async {
-    await d2.programModule.program
-        .download(_noopProgress);
-    await d2.organisationUnitModule.organisationUnit
-        .download(_noopProgress);
-    await d2.dataElementModule.dataElement
-        .download(_noopProgress);
+    await d2.programModule.program.download(_logProgress);
+    await d2.programModule.programStage.download(_logProgress);
+    await d2.programModule.programRule.download(_logProgress);
+    await d2.programModule.trackedEntityAttribute.download(_logProgress);
+    await d2.organisationUnitModule.organisationUnit.download(_logProgress);
+    await d2.dataElementModule.dataElement.download(_logProgress);
   }
 
   Future<void> syncEvents() async {
-    await d2.trackerModule.trackedEntityInstance
-        .upload(_noopProgress);
+    await d2.trackerModule.trackedEntityInstance.upload(_logProgress);
+    await d2.trackerModule.event.upload(_logProgress);
   }
 
-  static void _noopProgress(RequestProgress progress, bool done) {}
+  Future<int> getPendingCount() async {
+    final dirtyTeis = await d2.trackerModule.trackedEntityInstance
+        .where(attribute: 'synced', value: false)
+        .where(attribute: 'dirty', value: true)
+        .get();
+    final dirtyEvents = await d2.trackerModule.event
+        .where(attribute: 'synced', value: false)
+        .where(attribute: 'dirty', value: true)
+        .get();
+    return (dirtyTeis?.length ?? 0) + (dirtyEvents?.length ?? 0);
+  }
+
+  static void _logProgress(RequestProgress progress, bool done) {
+    debugPrint('[DHIS2Sync] ${progress.percentage}% — ${progress.message}');
+  }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/utils/date_formatter.dart';
 import '../../../../shared/widgets/molecules/summary_row.dart';
 import '../../../../shared/widgets/atoms/status_badge.dart';
 import '../../domain/entities/booking.dart';
@@ -63,7 +64,7 @@ class BookingDetailsPanel extends StatelessWidget {
               QrCodeWidget(
                 bookingID: booking.id ?? booking.referenceCode ?? '',
                 arrivalDate: booking.arrivalDate != null
-                    ? '${booking.arrivalDate!.year}-${booking.arrivalDate!.month.toString().padLeft(2, '0')}-${booking.arrivalDate!.day.toString().padLeft(2, '0')}'
+                    ? DateFormatter.formatIsoDate(booking.arrivalDate!)
                     : '',
                 portOfEntry: booking.portOfEntry,
               ),

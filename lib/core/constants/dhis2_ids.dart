@@ -31,6 +31,7 @@ class DHIS2IDs {
 
   // visit_purpose_details
   static const String visitingPurposeAttr = 'zyC7l0mhZte';
+  // TODO(C6): map to booking when otherVisitingPurpose field is added to Booking entity
   static const String otherVisitingPurposeAttr = 'qiB2CZOGnq0';
   static const String durationOfStayTzAttr = 'xecQx9mtG7K';
 

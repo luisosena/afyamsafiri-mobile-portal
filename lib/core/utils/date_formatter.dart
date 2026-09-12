@@ -5,6 +5,10 @@ class DateFormatter {
     return DateFormat('dd MMM yyyy').format(date);
   }
 
+  static String formatIsoDate(DateTime date) {
+    return DateFormat('yyyy-MM-dd').format(date);
+  }
+
   static String formatDateTime(DateTime date) {
     return DateFormat('dd MMM yyyy, HH:mm').format(date);
   }
