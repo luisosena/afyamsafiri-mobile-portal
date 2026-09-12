@@ -37,7 +37,6 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<bool> updateProfile({
     String? fullName,
-    String? email,
     String? phone,
     String? nationality,
     String? passportNumber,
@@ -49,7 +48,6 @@ class ProfileProvider extends ChangeNotifier {
     try {
       _profile = await _repository.updateProfile(
         fullName: fullName,
-        email: email,
         phone: phone,
         nationality: nationality,
         passportNumber: passportNumber,

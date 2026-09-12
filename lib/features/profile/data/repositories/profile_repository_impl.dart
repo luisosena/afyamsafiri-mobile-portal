@@ -18,14 +18,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<Profile> updateProfile({
     String? fullName,
-    String? email,
     String? phone,
     String? nationality,
     String? passportNumber,
   }) async {
     final model = await remoteDataSource.updateProfile(
       fullName: fullName,
-      email: email,
       phone: phone,
       nationality: nationality,
       passportNumber: passportNumber,

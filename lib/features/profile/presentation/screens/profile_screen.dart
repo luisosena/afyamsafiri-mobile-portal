@@ -129,7 +129,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onSave: (data) async {
                     final success = await provider.updateProfile(
                       fullName: data['fullName'],
-                      email: data['email'],
                       phone: data['phone'],
                       nationality: data['nationality'],
                       passportNumber: data['passportNumber'],

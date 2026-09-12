@@ -55,8 +55,6 @@ class ProfileInfoSection extends StatelessWidget {
           const Divider(height: 1, color: AppColors.surfaceGray),
           SummaryRow(label: 'Full Name', value: profile.fullName),
           const Divider(height: 1, indent: 16, endIndent: 16, color: AppColors.surfaceGray),
-          SummaryRow(label: 'Email', value: profile.email),
-          const Divider(height: 1, indent: 16, endIndent: 16, color: AppColors.surfaceGray),
           SummaryRow(label: 'Phone', value: profile.phone ?? 'Not provided'),
           const Divider(height: 1, indent: 16, endIndent: 16, color: AppColors.surfaceGray),
           SummaryRow(label: 'Nationality', value: profile.nationality ?? 'Not provided'),

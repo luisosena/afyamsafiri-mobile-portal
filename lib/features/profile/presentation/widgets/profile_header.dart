@@ -56,12 +56,13 @@ class ProfileHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            profile.email,
-            style: AppTextStyles.body.copyWith(
-              color: AppColors.textMuted,
+          if (profile.phone != null)
+            Text(
+              profile.phone!,
+              style: AppTextStyles.body.copyWith(
+                color: AppColors.textMuted,
+              ),
             ),
-          ),
         ],
       ),
     );

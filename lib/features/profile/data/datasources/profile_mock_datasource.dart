@@ -5,7 +5,6 @@ class ProfileMockDataSource implements ProfileDataSource {
   final Map<String, dynamic> _profile = {
     'id': 'mock-user-001',
     'fullName': 'John Doe',
-    'email': 'john.doe@example.com',
     'phone': '+255712345678',
     'nationality': 'Tanzania',
     'passportNumber': 'AB1234567',
@@ -20,7 +19,6 @@ class ProfileMockDataSource implements ProfileDataSource {
   @override
   Future<ProfileModel> updateProfile({
     String? fullName,
-    String? email,
     String? phone,
     String? nationality,
     String? passportNumber,
@@ -28,7 +26,6 @@ class ProfileMockDataSource implements ProfileDataSource {
     await Future.delayed(const Duration(seconds: 1));
 
     if (fullName != null) _profile['fullName'] = fullName;
-    if (email != null) _profile['email'] = email;
     if (phone != null) _profile['phone'] = phone;
     if (nationality != null) _profile['nationality'] = nationality;
     if (passportNumber != null) _profile['passportNumber'] = passportNumber;

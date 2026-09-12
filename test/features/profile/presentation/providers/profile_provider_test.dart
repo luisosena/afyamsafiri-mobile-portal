@@ -13,7 +13,6 @@ void main() {
   const testProfile = Profile(
     id: 'u1',
     fullName: 'John Doe',
-    email: 'john@example.com',
     phone: '+255712345678',
     nationality: 'Tanzania',
     passportNumber: 'AB1234567',

@@ -28,7 +28,6 @@ class ProfileEditForm extends StatefulWidget {
 class _ProfileEditFormState extends State<ProfileEditForm> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
-  late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
   late final TextEditingController _nationalityController;
   late final TextEditingController _passportController;
@@ -37,7 +36,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.profile.fullName);
-    _emailController = TextEditingController(text: widget.profile.email);
     _phoneController = TextEditingController(text: widget.profile.phone ?? '');
     _nationalityController = TextEditingController(text: widget.profile.nationality ?? '');
     _passportController = TextEditingController(text: widget.profile.passportNumber ?? '');
@@ -46,7 +44,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
     _phoneController.dispose();
     _nationalityController.dispose();
     _passportController.dispose();
@@ -57,7 +54,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     if (!_formKey.currentState!.validate()) return;
     widget.onSave({
       'fullName': _nameController.text.trim(),
-      'email': _emailController.text.trim(),
       'phone': _phoneController.text.trim(),
       'nationality': _nationalityController.text.trim(),
       'passportNumber': _passportController.text.trim(),
@@ -94,19 +90,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
               hint: 'Enter your full name',
               required: true,
               validator: (v) => v == null || v.trim().isEmpty ? 'Name is required' : null,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            TextInput(
-              controller: _emailController,
-              label: 'Email',
-              hint: 'Enter your email',
-              required: true,
-              keyboardType: TextInputType.emailAddress,
-              validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Email is required';
-                if (!v.contains('@')) return 'Enter a valid email';
-                return null;
-              },
             ),
             const SizedBox(height: AppSpacing.md),
             TextInput(

@@ -4,7 +4,6 @@ abstract class ProfileDataSource {
   Future<ProfileModel> getProfile();
   Future<ProfileModel> updateProfile({
     String? fullName,
-    String? email,
     String? phone,
     String? nationality,
     String? passportNumber,
