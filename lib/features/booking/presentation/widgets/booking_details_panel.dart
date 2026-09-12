@@ -5,6 +5,7 @@ import '../../../../core/constants/app_text_styles.dart';
 import '../../../../shared/widgets/molecules/summary_row.dart';
 import '../../../../shared/widgets/atoms/status_badge.dart';
 import '../../domain/entities/booking.dart';
+import 'qr_code_widget.dart';
 
 class BookingDetailsPanel extends StatelessWidget {
   const BookingDetailsPanel({
@@ -59,33 +60,12 @@ class BookingDetailsPanel extends StatelessWidget {
           ),
           child: Column(
             children: [
-              Container(
-                width: 140,
-                height: 140,
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                  border: Border.all(
-                    color: AppColors.deepSlate.withValues(alpha: 0.1),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.qr_code_2,
-                      size: 64,
-                      color: AppColors.deepSlate.withValues(alpha: 0.3),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'QR Pass',
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                  ],
-                ),
+              QrCodeWidget(
+                bookingID: booking.id ?? booking.referenceCode ?? '',
+                arrivalDate: booking.arrivalDate != null
+                    ? '${booking.arrivalDate!.year}-${booking.arrivalDate!.month.toString().padLeft(2, '0')}-${booking.arrivalDate!.day.toString().padLeft(2, '0')}'
+                    : '',
+                portOfEntry: booking.portOfEntry,
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
