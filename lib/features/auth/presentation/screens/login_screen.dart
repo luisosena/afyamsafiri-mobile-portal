@@ -16,7 +16,7 @@ class LoginScreen extends StatelessWidget {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (authProvider.isAuthenticated) {
-        context.go('/home');
+        context.go('/profile');
       }
     });
 

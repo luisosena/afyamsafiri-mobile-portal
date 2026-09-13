@@ -22,7 +22,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProfileProvider>().loadProfile();
+      final authProvider = context.read<AuthProvider>();
+      if (authProvider.isAuthenticated) {
+        context.read<ProfileProvider>().loadProfile();
+      }
     });
   }
 
@@ -41,7 +44,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () {
               Navigator.pop(ctx);
               context.read<AuthProvider>().logout();
-              context.go('/login');
             },
             style: TextButton.styleFrom(foregroundColor: AppColors.urgentRed),
             child: const Text('Sign Out'),
@@ -53,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ProfileProvider>();
+    final authProvider = context.watch<AuthProvider>();
 
     return Scaffold(
       backgroundColor: AppColors.surfaceGray,
@@ -69,21 +71,106 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         actions: [
-          TextButton.icon(
-            onPressed: _showLogoutDialog,
-            icon: const Icon(Icons.logout, size: 18),
-            label: const Text('Sign Out'),
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.urgentRed,
+          if (authProvider.isAuthenticated)
+            TextButton.icon(
+              onPressed: _showLogoutDialog,
+              icon: const Icon(Icons.logout, size: 18),
+              label: const Text('Sign Out'),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.urgentRed,
+              ),
             ),
-          ),
         ],
       ),
-      body: _buildBody(provider),
+      body: authProvider.isAuthenticated
+          ? _AuthenticatedProfile()
+          : _GuestProfile(),
     );
   }
+}
 
-  Widget _buildBody(ProfileProvider provider) {
+class _GuestProfile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.containerPadding,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: const BoxDecoration(
+                color: AppColors.lightAccent,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.person_outline,
+                size: 40,
+                color: AppColors.primaryBlue,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'Guest',
+              style: AppTextStyles.heading1.copyWith(
+                fontSize: 20,
+                color: AppColors.deepSlate,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              'Sign in to save your profile and sync bookings across devices.',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.body.copyWith(color: AppColors.textMuted),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => context.go('/login'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryBlue,
+                  foregroundColor: AppColors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                  ),
+                ),
+                child: const Text('Log In'),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () => context.go('/create-account'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.primaryBlue,
+                  side: const BorderSide(color: AppColors.primaryBlue),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                  ),
+                ),
+                child: const Text('Create Account'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AuthenticatedProfile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<ProfileProvider>();
+
     switch (provider.status) {
       case ProfileStatus.initial:
       case ProfileStatus.loading:
@@ -133,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       nationality: data['nationality'],
                       passportNumber: data['passportNumber'],
                     );
-                    if (success && mounted) {
+                    if (success && context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Profile updated successfully.'),
