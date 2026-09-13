@@ -1,7 +1,15 @@
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'booking_datasource.dart';
 
 class BookingMockDataSource implements BookingDataSource {
-  final List<Map<String, dynamic>> _bookings = [
+  SharedPreferences? _prefs;
+  bool _initialized = false;
+  List<Map<String, dynamic>> _bookings = [];
+
+  static const _storageKey = 'afyamsafiri_bookings';
+
+  static const List<Map<String, dynamic>> _defaultSeedData = [
     {
       'id': 'ad-001',
       'referenceCode': 'TZ-2026-001',
@@ -27,11 +35,30 @@ class BookingMockDataSource implements BookingDataSource {
     },
   ];
 
+  Future<void> _ensureInitialized() async {
+    if (_initialized) return;
+    _prefs = await SharedPreferences.getInstance();
+    final stored = _prefs!.getString(_storageKey);
+    if (stored != null) {
+      final decoded = jsonDecode(stored) as List;
+      _bookings = decoded.map((e) => Map<String, dynamic>.from(e)).toList();
+    } else {
+      _bookings = List<Map<String, dynamic>>.from(_defaultSeedData);
+      await _save();
+    }
+    _initialized = true;
+  }
+
+  Future<void> _save() async {
+    await _prefs?.setString(_storageKey, jsonEncode(_bookings));
+  }
+
   @override
   Future<Map<String, dynamic>> submitBooking(
     Map<String, dynamic> data,
   ) async {
     await Future.delayed(const Duration(seconds: 1));
+    await _ensureInitialized();
 
     final entry = {
       'id': 'bk-${DateTime.now().millisecondsSinceEpoch}',
@@ -43,22 +70,26 @@ class BookingMockDataSource implements BookingDataSource {
     };
 
     _bookings.add(entry);
+    await _save();
     return entry;
   }
 
   @override
   Future<List<Map<String, dynamic>>> getBookings() async {
     await Future.delayed(const Duration(milliseconds: 800));
+    await _ensureInitialized();
     return List.from(_bookings);
   }
 
   @override
   Future<void> cancelBooking(String bookingId) async {
     await Future.delayed(const Duration(seconds: 1));
+    await _ensureInitialized();
     final index = _bookings.indexWhere((d) => d['id'] == bookingId);
     if (index == -1) throw Exception('Booking not found');
     _bookings[index]['status'] = 'cancelled';
     _bookings[index]['updatedAt'] = DateTime.now().toIso8601String();
+    await _save();
   }
 
   @override
