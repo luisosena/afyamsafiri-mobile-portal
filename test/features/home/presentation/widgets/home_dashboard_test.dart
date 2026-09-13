@@ -76,7 +76,7 @@ void main() {
       await tester.pumpWidget(buildHomeDashboard());
       await tester.pumpAndSettle();
 
-      expect(find.text('John Doe'), findsOneWidget);
+      expect(find.text('Hello John Doe'), findsOneWidget);
     });
 
     testWidgets('renders greeting with fallback name when user is null', (tester) async {
@@ -85,29 +85,22 @@ void main() {
       await tester.pumpWidget(buildHomeDashboard());
       await tester.pumpAndSettle();
 
-      expect(find.text('Traveller'), findsOneWidget);
+      expect(find.text('Hello Traveller'), findsOneWidget);
     });
 
-    testWidgets('renders Plan Your Trip card', (tester) async {
+    testWidgets('renders Welcome to Tanzania card', (tester) async {
       await tester.pumpWidget(buildHomeDashboard());
       await tester.pumpAndSettle();
 
-      expect(find.text('Plan Your Trip'), findsOneWidget);
-    });
-
-    testWidgets('renders quick action cards', (tester) async {
-      await tester.pumpWidget(buildHomeDashboard());
-      await tester.pumpAndSettle();
-
-      expect(find.text('My QR Pass'), findsOneWidget);
-      expect(find.text('History'), findsOneWidget);
+      expect(find.text('Welcome to Tanzania'), findsOneWidget);
+      expect(find.text('Create Arrival Booking'), findsOneWidget);
     });
 
     testWidgets('renders notification bell', (tester) async {
       await tester.pumpWidget(buildHomeDashboard());
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.notifications_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.notifications), findsOneWidget);
     });
 
     testWidgets('shows upcoming booking card when booking exists', (tester) async {
@@ -116,7 +109,7 @@ void main() {
       await tester.pumpWidget(buildHomeDashboard());
       await tester.pumpAndSettle();
 
-      expect(find.text('TZ-2026-001'), findsOneWidget);
+      expect(find.textContaining('TZ-2026-001'), findsOneWidget);
       expect(find.text('View Booking Details'), findsOneWidget);
     });
 
@@ -127,6 +120,7 @@ void main() {
       expect(find.text('View Booking Details'), findsNothing);
     });
 
+
     testWidgets('calls loadBookings on init', (tester) async {
       await tester.pumpWidget(buildHomeDashboard());
       await tester.pumpAndSettle();
@@ -135,3 +129,4 @@ void main() {
     });
   });
 }
+

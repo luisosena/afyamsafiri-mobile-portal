@@ -89,8 +89,10 @@ class UpcomingBookingCard extends StatelessWidget {
                 style: AppTextStyles.body.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
+                  color: AppColors.primaryBlue,
                 ),
               ),
+
             ),
           ),
         ],

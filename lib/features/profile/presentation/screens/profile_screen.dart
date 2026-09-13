@@ -62,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.white,
         elevation: 0,
-        centerTitle: false,
+        centerTitle: true,
         title: Text(
           'Profile',
           style: AppTextStyles.heading1.copyWith(
@@ -70,6 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             color: AppColors.deepSlate,
           ),
         ),
+
         actions: [
           if (authProvider.isAuthenticated)
             TextButton.icon(

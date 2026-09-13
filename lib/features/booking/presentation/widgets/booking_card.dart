@@ -102,7 +102,7 @@ class BookingCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           SizedBox(
             width: double.infinity,
-            height: 40,
+            height: 44,
             child: OutlinedButton(
               onPressed: onViewDetails,
               style: OutlinedButton.styleFrom(
@@ -115,13 +115,16 @@ class BookingCard extends StatelessWidget {
               ),
               child: Text(
                 'View Details',
-                style: AppTextStyles.caption.copyWith(
+                style: AppTextStyles.body.copyWith(
                   fontWeight: FontWeight.w600,
+                  fontSize: 14,
                   color: AppColors.primaryBlue,
                 ),
               ),
+
             ),
           ),
+
         ],
       ),
     );

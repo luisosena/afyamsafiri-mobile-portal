@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 
 import 'app_shell.dart';
-import '../../features/onboarding/presentation/screens/splash_screen.dart';
+
 import '../../features/onboarding/presentation/screens/welcome_screen.dart';
 import '../../features/auth/presentation/screens/create_account_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -25,14 +25,15 @@ class AppRouter {
   AppRouter._();
 
   static final GoRouter router = GoRouter(
-    initialLocation: '/splash',
+    initialLocation: '/home',
     routes: [
-      // Splash
+      // Splash (redirects to /home where seamless splash overlay runs on launch)
       GoRoute(
         path: '/splash',
         name: 'splash',
-        builder: (context, state) => const SplashScreen(),
+        redirect: (context, state) => '/home',
       ),
+
 
       // Onboarding
       GoRoute(
@@ -62,6 +63,8 @@ class AppRouter {
             name: 'home',
             builder: (context, state) => const HomeScreen(),
           ),
+
+
           GoRoute(
             path: '/bookings',
             name: 'bookings',

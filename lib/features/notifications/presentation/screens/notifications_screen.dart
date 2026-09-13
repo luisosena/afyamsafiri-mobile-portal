@@ -31,7 +31,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.white,
         elevation: 0,
-        centerTitle: false,
+        centerTitle: true,
         title: Text(
           'Notifications',
           style: AppTextStyles.heading1.copyWith(
@@ -39,6 +39,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             color: AppColors.deepSlate,
           ),
         ),
+
         actions: [
           if (provider.unreadCount > 0)
             TextButton(

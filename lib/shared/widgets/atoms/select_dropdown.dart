@@ -45,11 +45,16 @@ class SelectDropdown extends StatelessWidget {
           const SizedBox(height: 8),
         ],
         DropdownButtonFormField<String>(
+          isExpanded: true,
           initialValue: value,
           items: items
               .map((e) => DropdownMenuItem(
                     value: e,
-                    child: Text(e, style: AppTextStyles.body),
+                    child: Text(
+                      e,
+                      style: AppTextStyles.body,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ))
               .toList(),
           onChanged: onChanged,
@@ -58,8 +63,9 @@ class SelectDropdown extends StatelessWidget {
             hintText: hint ?? 'Select an option',
             errorText: errorText,
           ),
-          icon: Icon(Icons.keyboard_arrow_down, color: AppColors.textMuted),
+          icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.textMuted),
         ),
+
       ],
     );
   }

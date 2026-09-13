@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
-import '../../../../core/constants/app_text_styles.dart';
 import '../../../booking/presentation/providers/booking_provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../shared/widgets/molecules/offline_banner.dart';
@@ -31,33 +31,99 @@ class _HomeDashboardState extends State<HomeDashboard> {
     final bookingProvider = context.watch<BookingProvider>();
     final userName = authProvider.user?.fullName ?? 'Traveller';
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.containerPadding,
-        vertical: AppSpacing.md,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: AppColors.brandBlue,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const OfflineBanner(),
-          _GreetingHeader(userName: userName),
-          const SizedBox(height: AppSpacing.lg),
-          _PlanTripCard(
-            onTap: () => context.go('/booking'),
-          ),
-          if (bookingProvider.latestSubmittedBooking != null) ...[
-            const SizedBox(height: AppSpacing.md),
-            UpcomingBookingCard(
-              booking: bookingProvider.latestSubmittedBooking!,
-              onViewDetails: () => context.go(
-                '/bookings/${bookingProvider.latestSubmittedBooking!.id}',
+          // Top Header Bar with Coat of Arms
+          const _TopHeaderBar(),
+
+          // Scrollable Body Content
+          Expanded(
+            child: Container(
+              color: AppColors.white,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.containerPadding,
+                  vertical: AppSpacing.md,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const OfflineBanner(),
+                    _GreetingHeader(userName: userName),
+                    const SizedBox(height: 20),
+                    _WelcomeBannerCard(
+                      onTap: () => context.go('/booking'),
+                    ),
+                    if (bookingProvider.latestSubmittedBooking != null) ...[
+                      const SizedBox(height: 20),
+                      UpcomingBookingCard(
+                        booking: bookingProvider.latestSubmittedBooking!,
+                        onViewDetails: () => context.go(
+                          '/bookings/${bookingProvider.latestSubmittedBooking!.id}',
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
-          ],
-          const SizedBox(height: AppSpacing.md),
-          _QuickActionsRow(),
-          const SizedBox(height: AppSpacing.xxl),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class _TopHeaderBar extends StatelessWidget {
+  const _TopHeaderBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: AppColors.brandBlue,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8, bottom: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                'assets/images/coat_of_arms.png',
+                width: 36,
+                height: 36,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'AfyaMsafiri',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'Traveler Health Surveillance',
+                style: TextStyle(
+                  color: AppColors.white.withValues(alpha: 0.9),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -68,185 +134,170 @@ class _GreetingHeader extends StatelessWidget {
 
   final String userName;
 
-  String get _greeting {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
-  }
-
   @override
   Widget build(BuildContext context) {
+    final displayName = userName.isNotEmpty && userName != 'Traveller'
+        ? userName
+        : 'Traveller';
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Hello $displayName',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.deepSlate,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Welcome to travelers\' health surveillance system',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Color(0xFF6B7280),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        Row(
           children: [
-            Text(
-              '$_greeting,',
-              style: AppTextStyles.body.copyWith(color: AppColors.textMuted),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              userName,
-              style: AppTextStyles.heading1.copyWith(fontSize: 22),
-            ),
-          ],
-        ),
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: AppColors.lightAccent,
-            shape: BoxShape.circle,
-          ),
-          child: IconButton(
-            icon: const Icon(
-              Icons.notifications_outlined,
-              color: AppColors.primaryBlue,
-              size: 22,
-            ),
-            onPressed: () => context.go('/notifications'),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PlanTripCard extends StatelessWidget {
-  const _PlanTripCard({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppColors.primaryBlue, Color(0xFF3B82F6)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primaryBlue.withValues(alpha: 0.3),
-              offset: const Offset(0, 4),
-              blurRadius: 16,
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                  ),
-                  child: const Icon(
-                    Icons.flight_takeoff,
-                    color: AppColors.white,
-                    size: 22,
-                  ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              child: const Text(
+                'US',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.deepSlate,
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Text(
-                    'Plan Your Trip',
-                    style: AppTextStyles.heading1.copyWith(
-                      color: AppColors.white,
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  color: AppColors.white,
-                  size: 16,
-                ),
-              ],
+              ),
             ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Register your arrival and complete the traveler surveillance form before travelling to Tanzania.',
-              style: AppTextStyles.body.copyWith(
-                color: AppColors.white.withValues(alpha: 0.85),
-                fontSize: 13,
+            const SizedBox(width: 8),
+            Container(
+              width: 42,
+              height: 42,
+              decoration: const BoxDecoration(
+                color: AppColors.lightBlueAccent,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.notifications,
+                  color: AppColors.deepSlate,
+                  size: 20,
+                ),
+                onPressed: () => context.go('/notifications'),
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _QuickActionsRow extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _QuickActionCard(
-            icon: Icons.qr_code_2,
-            label: 'My QR Pass',
-            onTap: () => context.go('/bookings'),
-          ),
-        ),
-        const SizedBox(width: AppSpacing.sm),
-        Expanded(
-          child: _QuickActionCard(
-            icon: Icons.history,
-            label: 'History',
-            onTap: () => context.go('/bookings'),
-          ),
-        ),
       ],
     );
   }
 }
 
-class _QuickActionCard extends StatelessWidget {
-  const _QuickActionCard({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
+class _WelcomeBannerCard extends StatelessWidget {
+  const _WelcomeBannerCard({required this.onTap});
 
-  final IconData icon;
-  final String label;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-        decoration: BoxDecoration(
-          color: AppColors.lightAccent,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-        ),
-        child: Column(
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.bannerBlue,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
           children: [
-            Icon(icon, color: AppColors.primaryBlue, size: 28),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              label,
-              style: AppTextStyles.caption.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.deepSlate,
+            // Decorative background bubble arcs
+            Positioned(
+              right: -30,
+              top: -30,
+              child: Container(
+                width: 180,
+                height: 180,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.white.withValues(alpha: 0.12),
+                ),
+              ),
+            ),
+            Positioned(
+              left: -40,
+              bottom: -40,
+              child: Container(
+                width: 140,
+                height: 140,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.white.withValues(alpha: 0.08),
+                ),
+              ),
+            ),
+
+            // Card content
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Welcome to Tanzania',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 48),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: onTap,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.white,
+                        foregroundColor: AppColors.bannerBlue,
+                        elevation: 0,
+                        padding: EdgeInsets.zero,
+                        alignment: Alignment.center,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.add, color: AppColors.bannerBlue, size: 22),
+                          SizedBox(width: 8),
+                          Text(
+                            'Create Arrival Booking',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.bannerBlue,
+                              height: 1.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                ],
               ),
             ),
           ],
